@@ -44,7 +44,7 @@ I enjoy working with modern frontend tools while keeping performance and user ex
 
 ---
 
-## Demo
+
 ## 🎬 Portfolio Demo
 
 <p align="center">
