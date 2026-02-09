@@ -178,28 +178,41 @@ document.onkeydown = function (e) {
         return false;
     }
 }
-// fetch certifications start
+// ================= CERTIFICATIONS (SINGLE SOURCE OF TRUTH) =================
+
 function getCertifications() {
   return fetch("certifications.json")
-    .then(response => response.json())
-    .then(data => data);
+    .then(res => res.json());
 }
 
 function showCertifications(certificates) {
   const container = document.querySelector(".cert-container");
+  if (!container) return;
+
+  const isHomePage =
+    window.location.pathname === "/" ||
+    window.location.pathname.endsWith("index.html");
+
+  const isMobile = window.innerWidth <= 768;
+  const HOME_LIMIT = isMobile ? 3 : 6;
+
   let html = "";
 
-  certificates.forEach(cert => {
+  certificates.forEach((cert, index) => {
+    const isNewest = index === 0 ? " newest-cert" : "";
+
     html += `
-      <div class="grid-item ${cert.category}">
-        <div class="box tilt" style="width: 380px; margin: 1rem">
-          <img draggable="false" src="/assets/images/certifications/${cert.image}.png" alt="certification" />
+      <div class="grid-item cert-card ${cert.category}${isNewest}">
+        <div class="box tilt">
+          <img src="/assets/images/certifications/${cert.image}.png" alt="${cert.name}">
           <div class="content">
             <div class="tag"><h3>${cert.name}</h3></div>
             <div class="desc">
               <p>${cert.desc}</p>
               <div class="btns">
-                <a href="${cert.link}" class="btn" target="_blank"><i class="fas fa-eye"></i> View</a>
+                <a href="${cert.link}" class="btn" target="_blank">
+                  <i class="fas fa-eye"></i> View
+                </a>
               </div>
             </div>
           </div>
@@ -209,26 +222,28 @@ function showCertifications(certificates) {
 
   container.innerHTML = html;
 
-  var $gridCert = $('.cert-container').isotope({
-    itemSelector: '.grid-item',
+  // INIT ISOTOPE
+  const $grid = $('.cert-container').isotope({
+    itemSelector: '.cert-card',
     layoutMode: 'fitRows'
   });
 
+  // HOME PAGE LIMIT
+  if (isHomePage) {
+    $(".cert-card").hide().slice(0, HOME_LIMIT).show();
+    $grid.isotope("layout");
+  }
+
+  // FILTERS
   $('#cert-filters').on('click', 'button', function () {
-    $('#cert-filters').find('.is-checked').removeClass('is-checked');
+    $('#cert-filters button').removeClass('is-checked');
     $(this).addClass('is-checked');
-    var filterValue = $(this).attr('data-filter');
-    $gridCert.isotope({ filter: filterValue });
+    const filterValue = $(this).attr('data-filter');
+    $grid.isotope({ filter: filterValue });
   });
 }
 
-getCertifications().then(data => showCertifications(data));
-// fetch certifications end
-// "View All" button resets filter
-document.getElementById("view-all-cert").addEventListener("click", () => {
-  $gridCert.isotope({ filter: "*" });
-  document.querySelectorAll("#cert-filters .btn").forEach(btn => btn.classList.remove("is-checked"));
-});
+getCertifications().then(showCertifications);
 
 
 
