@@ -78,175 +78,173 @@ var typed = new Typed(".typing-text", {
     backDelay: 500,
 });
 // <!-- typed js effect ends -->
+// ================= FETCH DATA =================
 
 async function fetchData(type = "skills") {
-    let response
-    type === "skills" ?
-        response = await fetch("skills.json")
-        :
-        response = await fetch("./projects/projects.json")
-    const data = await response.json();
-    return data;
+    try {
+        let response;
+
+        if (type === "skills") {
+            response = await fetch("skills.json");
+        } else {
+            response = await fetch("./projects/projects.json");
+        }
+
+        if (!response.ok) throw new Error("Failed to fetch data");
+
+        return await response.json();
+
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return [];
+    }
 }
 
-function showSkills(skills) {
-    let skillsContainer = document.getElementById("skillsContainer");
-    let skillHTML = "";
-    skills.forEach(skill => {
-        skillHTML += `
-        <div class="bar">
-              <div class="info">
-                <img src=${skill.icon} alt="skill" />
-                <span>${skill.name}</span>
-              </div>
-            </div>`
-    });
-    skillsContainer.innerHTML = skillHTML;
-}
+
+// ================= PROJECTS =================
 
 function showProjects(projects) {
-    let projectsContainer = document.querySelector("#work .box-container");
-    let projectHTML = "";
-    projects.slice(0, 10).filter(project => project.category != "android").forEach(project => {
-        projectHTML += `
-        <div class="box tilt">
-      <img draggable="false" src="/assets/images/projects/${project.image}.png" alt="project" />
-      <div class="content">
-        <div class="tag">
-        <h3>${project.name}</h3>
-        </div>
-        <div class="desc">
-          <p>${project.desc}</p>
-          <div class="btns">
-            <a href="${project.links.view}" class="btn" target="_blank"><i class="fas fa-eye"></i> View</a>
-            <a href="${project.links.code}" class="btn" target="_blank">Code <i class="fas fa-code"></i></a>
-          </div>
-        </div>
-      </div>
-    </div>`
-    });
-    projectsContainer.innerHTML = projectHTML;
 
-    // <!-- tilt js effect starts -->
-    VanillaTilt.init(document.querySelectorAll(".tilt"), {
-        max: 15,
-    });
-    // <!-- tilt js effect ends -->
+    const container = document.querySelector("#work .box-container");
+    if (!container || !projects) return;
 
-    /* ===== SCROLL REVEAL ANIMATION ===== */
-    const srtop = ScrollReveal({
-        origin: 'top',
-        distance: '80px',
-        duration: 1000,
-        reset: true
-    });
+    const isProjectsPage = window.location.pathname.includes("/projects");
+    const isHomePage = !isProjectsPage;
 
-    /* SCROLL PROJECTS */
-    srtop.reveal('.work .box', { interval: 200 });
+    const isMobileProject = window.innerWidth <= 768;
 
-}
+    // 🔥 PROJECT LIMIT
+    const PROJECT_LIMIT = isMobileProject ? 4 : 7;
 
-fetchData().then(data => {
-    showSkills(data);
-});
+    let html = "";
 
-fetchData("projects").then(data => {
-    showProjects(data);
-});
+    projects
+        .filter(project => project.category !== "android")
+        .forEach((project, index) => {
 
-// <!-- tilt js effect starts -->
-VanillaTilt.init(document.querySelectorAll(".tilt"), {
-    max: 15,
-});
-// <!-- tilt js effect ends -->
+            if (isHomePage && index >= PROJECT_LIMIT) return;
 
-// disable developer mode
-document.onkeydown = function (e) {
-    if (e.keyCode == 123) {
-        return false;
-    }
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
-        return false;
-    }
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) {
-        return false;
-    }
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
-        return false;
-    }
-    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
-        return false;
+            html += `
+            <div class="box tilt">
+                <img draggable="false"
+                     src="./assets/images/projects/${project.image}.png"
+                     alt="${project.name}" />
+                <div class="content">
+                    <div class="tag">
+                        <h3>${project.name}</h3>
+                    </div>
+                    <div class="desc">
+                        <p>${project.desc}</p>
+                        <div class="btns">
+                            <a href="${project.links.view}" class="btn" target="_blank">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="${project.links.code}" class="btn" target="_blank">
+                                Code <i class="fas fa-code"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        });
+
+    container.innerHTML = html;
+
+    if (typeof VanillaTilt !== "undefined") {
+        VanillaTilt.init(document.querySelectorAll(".tilt"), { max: 15 });
     }
 }
-// ================= CERTIFICATIONS (SINGLE SOURCE OF TRUTH) =================
+
+
+// ================= CERTIFICATIONS =================
 
 function getCertifications() {
-  return fetch("certifications.json")
-    .then(res => res.json());
+    return fetch("certifications.json")
+        .then(res => res.json())
+        .catch(err => {
+            console.error("Error loading certifications:", err);
+            return [];
+        });
 }
 
 function showCertifications(certificates) {
-  const container = document.querySelector(".cert-container");
-  if (!container) return;
 
-  const isHomePage =
-    window.location.pathname === "/" ||
-    window.location.pathname.endsWith("index.html");
+    const container = document.querySelector(".cert-container");
+    if (!container || !certificates) return;
 
-  const isMobile = window.innerWidth <= 768;
-  const HOME_LIMIT = isMobile ? 3 : 6;
+    const isCertificationPage = window.location.pathname.includes("/certification");
+    const isHomePage = !isCertificationPage;
 
-  let html = "";
+    const isMobileCert = window.innerWidth <= 768;
 
-  certificates.forEach((cert, index) => {
-    const isNewest = index === 0 ? " newest-cert" : "";
+    // 🔥 CERTIFICATION LIMIT
+    const CERT_LIMIT = isMobileCert ? 3 : 6;
 
-    html += `
-      <div class="grid-item cert-card ${cert.category}${isNewest}">
-        <div class="box tilt">
-          <img src="/assets/images/certifications/${cert.image}.png" alt="${cert.name}">
-          <div class="content">
-            <div class="tag"><h3>${cert.name}</h3></div>
-            <div class="desc">
-              <p>${cert.desc}</p>
-              <div class="btns">
-                <a href="${cert.link}" class="btn" target="_blank">
-                  <i class="fas fa-eye"></i> View
-                </a>
-              </div>
+    let html = "";
+
+    certificates.forEach((cert, index) => {
+
+        if (isHomePage && index >= CERT_LIMIT) return;
+
+        html += `
+        <div class="grid-item cert-card ${cert.category}">
+            <div class="box tilt">
+                <img src="./assets/images/certifications/${cert.image}.png" alt="${cert.name}">
+                <div class="content">
+                    <div class="tag"><h3>${cert.name}</h3></div>
+                    <div class="desc">
+                        <p>${cert.desc}</p>
+                        <div class="btns">
+                            <a href="${cert.link}" class="btn" target="_blank">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>`;
-  });
+        </div>`;
+    });
 
-  container.innerHTML = html;
+    container.innerHTML = html;
 
-  // INIT ISOTOPE
-  const $grid = $('.cert-container').isotope({
-    itemSelector: '.cert-card',
-    layoutMode: 'fitRows'
-  });
+    if ($.fn.isotope) {
+        const $grid = $('.cert-container').isotope({
+            itemSelector: '.cert-card',
+            layoutMode: 'fitRows'
+        });
 
-  // HOME PAGE LIMIT
-  if (isHomePage) {
-    $(".cert-card").hide().slice(0, HOME_LIMIT).show();
-    $grid.isotope("layout");
-  }
+        if ($('#cert-filters').length) {
+            $('#cert-filters').on('click', 'button', function () {
+                $('#cert-filters button').removeClass('is-checked');
+                $(this).addClass('is-checked');
+                const filterValue = $(this).attr('data-filter');
+                $grid.isotope({ filter: filterValue });
+            });
+        }
+    }
 
-  // FILTERS
-  $('#cert-filters').on('click', 'button', function () {
-    $('#cert-filters button').removeClass('is-checked');
-    $(this).addClass('is-checked');
-    const filterValue = $(this).attr('data-filter');
-    $grid.isotope({ filter: filterValue });
-  });
+    if (typeof VanillaTilt !== "undefined") {
+        VanillaTilt.init(document.querySelectorAll(".tilt"), { max: 15 });
+    }
 }
 
-getCertifications().then(showCertifications);
+
+// ================= LOAD DATA =================
+
+fetchData().then(data => showSkills(data));
+fetchData("projects").then(data => showProjects(data));
+getCertifications().then(data => showCertifications(data));
 
 
+// ================= DISABLE DEVELOPER MODE =================
 
+document.onkeydown = function (e) {
+    if (e.keyCode == 123) return false;
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 73) return false;
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 67) return false;
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 74) return false;
+    if (e.ctrlKey && e.keyCode == 85) return false;
+};
 // Start of Tawk.to Live Chat
 var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
 (function () {

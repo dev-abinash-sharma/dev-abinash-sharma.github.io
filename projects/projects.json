@@ -9,14 +9,15 @@
       "code": "https://github.com/abinasharma001/ATM-Machine-Simulator-Using-Python"
     }
   },
-  {
-    "name": "Snake Game",
-    "desc": "Classic Snake Game Using Python Language,Graphical Based",
-    "image": "sppuprepandroid",
-    "category": "Python",
+
+    {
+    "name": "Portfolio Website",
+    "desc": "Personal Portfolio Website. Don't Need Much Info About It, Just Scroll Down. You're Here Only!",
+    "image": "portfolio1",
+    "category": "Ongoing Web",
     "links": {
-      "view": "https://www.linkedin.com/posts/contactabinashsharma_python-pygame-gamedevelopment-activity-7208872022188191745-DGWS?utm_source=share&utm_medium=member_android&rcm=ACoAAD4u2dABr3u38OLxE-nb10uFwOUDZk6oqFw",
-      "code": "https://github.com/abinasharma001/Snake-Game-Using-Python"
+      "view": "https://dev-abinash-sharma.netlify.app/",
+      "code": "https://dev-abinash-sharma.netlify.app/"
     }
   },
   {
@@ -39,6 +40,16 @@
       "code": "https://github.com/abinasharma001/flask-gemini-chatbot"
     }
   },
+    {
+    "name": "Snake Game",
+    "desc": "Classic Snake Game Using Python Language,Graphical Based",
+    "image": "sppuprepandroid",
+    "category": "Python",
+    "links": {
+      "view": "https://www.linkedin.com/posts/contactabinashsharma_python-pygame-gamedevelopment-activity-7208872022188191745-DGWS?utm_source=share&utm_medium=member_android&rcm=ACoAAD4u2dABr3u38OLxE-nb10uFwOUDZk6oqFw",
+      "code": "https://github.com/abinasharma001/Snake-Game-Using-Python"
+    }
+  },
   {
     "name": "Connect Four Game",
     "desc": "Connect four game using python, if Four color are matched in a row then the player win",
@@ -49,17 +60,17 @@
       "code": "https://github.com/abinasharma001/Connect-Four-Game"
     }
   },
-
   {
-    "name": "Portfolio Website",
-    "desc": "Personal Portfolio Website. Don't Need Much Info About It, Just Scroll Down. You're Here Only!",
-    "image": "portfolio1",
-    "category": "Ongoing Web",
+    "name": "Research Agent",
+    "desc": "ABNS: it understands research questions and retrieves relevant information. made Using of IBM cloud lite services and Watsonx.ai .",
+    "image": "kiaweb",
+    "category": "Backendai Ongoing",
     "links": {
-      "view": "https://dev-abinash-sharma.netlify.app/",
-      "code": "https://dev-abinash-sharma.netlify.app/"
+      "view": "https://github.com/Abinash002coder/Research-Agent-on-IBM-cloud-",
+      "code": "https://github.com/Abinash002coder/Research-Agent-on-IBM-cloud-"
     }
   },
+
   {
     "name": "User Login System",
     "desc": "user login system for a Django website.Under development by abns",
@@ -89,16 +100,6 @@
     "links": {
       "view": "#",
       "code": "#"
-    }
-  },
-  {
-    "name": "Research Agent",
-    "desc": "ABNS: it understands research questions and retrieves relevant information. made Using of IBM cloud lite services and Watsonx.ai .",
-    "image": "kiaweb",
-    "category": "Backendai Ongoing",
-    "links": {
-      "view": "https://github.com/Abinash002coder/Research-Agent-on-IBM-cloud-",
-      "code": "https://github.com/Abinash002coder/Research-Agent-on-IBM-cloud-"
     }
   },
 
