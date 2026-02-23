@@ -9,13 +9,47 @@ jobs:
   update-badges:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Fetch Credly badges JSON
+      - name: Fetch Credly public page
         run: |
-          curl -s https://www.credly.com/users/abinash-sharma.8f49b107 > assets/badges.json
+          curl -L -s https://www.credly.com/users/abinash-sharma.8f49b107 > page.html
+
+      - name: Install Python dependencies
+        run: |
+          pip install beautifulsoup4
+
+      - name: Generate badges.json
+        run: |
+          python <<EOF
+          import json
+          from bs4 import BeautifulSoup
+
+          with open("page.html", "r", encoding="utf-8") as f:
+              soup = BeautifulSoup(f, "html.parser")
+
+          badges = []
+
+          for a in soup.find_all("a", href=True):
+              if "/badges/" in a["href"]:
+                  img = a.find("img")
+                  if img and img.get("src"):
+                      badges.append({
+                          "name": img.get("alt", "Credly Badge"),
+                          "image": img.get("src"),
+                          "url": "https://www.credly.com" + a["href"]
+                      })
+
+          with open("assets/badges.json", "w") as f:
+              json.dump(badges, f, indent=2)
+
+          print("Badges JSON updated successfully.")
+          EOF
 
       - name: Commit and push if changed
         run: |
