@@ -1,0 +1,26 @@
+name: Update Credly Badges
+
+on:
+  schedule:
+    - cron: "0 0 * * *"   # Runs daily at midnight UTC
+  workflow_dispatch:
+
+jobs:
+  update-badges:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch Credly badges JSON
+        run: |
+          curl -s https://www.credly.com/users/abinash-sharma.8f49b107 > assets/badges.json
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add assets/badges.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update Credly badges"
+          git push
