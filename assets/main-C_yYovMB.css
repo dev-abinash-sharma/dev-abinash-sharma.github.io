@@ -70,3 +70,106 @@
 .view-more .btn:active {
   transform: translateY(-1px);
 }
+
+/* =========================================
+   MOBILE FIX – JS CAROUSEL SAFE VERSION
+========================================= */
+
+@media (max-width: 768px) {
+
+  .socard-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 0 1rem;
+  }
+
+  .left-section,
+  .right-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* GitHub card */
+  .github-card {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+  }
+
+  /* Carousel wrapper */
+  .social-carousel {
+    width: 100%;
+    max-width: 420px;
+    height: 260px;   /* Important: Give height */
+    position: relative;
+  }
+
+  .carousel-container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .carousel-track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.4s ease;
+  }
+
+  .oksocial-card {
+    min-width: 100%;
+    height: 100%;
+    padding: 30px;
+  }
+
+  /* Arrow styling */
+  .carousel-nav {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* YouTube Card */
+  .youtube-card {
+    width: 100%;
+    max-width: 420px;
+    min-height: 450px;
+    padding: 40px 25px;
+  }
+
+  .profile-pic {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 25px;
+  }
+
+}
+/* =========================================
+   MOBILE CAROUSEL ALIGNMENT FIX
+========================================= */
+
+@media (max-width: 768px) {
+
+  .carousel-container {
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .carousel-track {
+    display: flex;
+    gap: 0 !important;     /* remove any spacing */
+  }
+
+  .oksocial-card {
+    flex: 0 0 100% !important;   /* force exact width */
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 20px;
+  }
+
+}
