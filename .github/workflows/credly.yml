@@ -2,7 +2,7 @@ name: Update Credly Badges
 
 on:
   schedule:
-    - cron: "0 0 * * *"   # Runs daily at midnight UTC
+    - cron: "0 0 * * *"   # Daily at midnight UTC
   workflow_dispatch:
 
 jobs:
@@ -16,39 +16,47 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Fetch Credly public page
+      - name: Fetch Credly public profile page
         run: |
-          curl -L -s https://www.credly.com/users/abinash-sharma.8f49b107 > page.html
+          curl -L -A "Mozilla/5.0" -s https://www.credly.com/users/abinash-sharma.8f49b107 > page.html
 
-      - name: Install Python dependencies
-        run: |
-          pip install beautifulsoup4
-
-      - name: Generate badges.json
+      - name: Generate badges.json from embedded data
         run: |
           python <<EOF
           import json
-          from bs4 import BeautifulSoup
+          import re
 
           with open("page.html", "r", encoding="utf-8") as f:
-              soup = BeautifulSoup(f, "html.parser")
+              html = f.read()
 
           badges = []
 
-          for a in soup.find_all("a", href=True):
-              if "/badges/" in a["href"]:
-                  img = a.find("img")
-                  if img and img.get("src"):
+          # Extract embedded JSON from page
+          script_match = re.search(r'window\.__INITIAL_STATE__\s*=\s*(\{.*?\});', html, re.DOTALL)
+
+          if script_match:
+              try:
+                  data = json.loads(script_match.group(1))
+
+                  # Navigate possible badge structure safely
+                  entities = data.get("entities", {})
+                  badge_entities = entities.get("badges", {})
+
+                  for badge_id, badge in badge_entities.items():
                       badges.append({
-                          "name": img.get("alt", "Credly Badge"),
-                          "image": img.get("src"),
-                          "url": "https://www.credly.com" + a["href"]
+                          "name": badge.get("name"),
+                          "image": badge.get("image_url"),
+                          "url": badge.get("public_url")
                       })
 
+              except Exception as e:
+                  print("JSON parsing error:", e)
+
+          # Write cleaned badges.json
           with open("assets/badges.json", "w") as f:
               json.dump(badges, f, indent=2)
 
-          print("Badges JSON updated successfully.")
+          print("Badges extracted:", len(badges))
           EOF
 
       - name: Commit and push if changed
