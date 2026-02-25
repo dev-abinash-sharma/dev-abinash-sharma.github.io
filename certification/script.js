@@ -30,99 +30,126 @@ document.addEventListener('visibilitychange', function () {
 
 /* ==================== CERTIFICATIONS ==================== */
 $(document).ready(function () {
+
   const $container = $(".cert-container");
   if ($container.length === 0) return;
 
-  /* ✅ CORRECT PAGE DETECTION */
   const isHomePage = !window.location.pathname.includes("/certification");
-
-  /* ✅ MOBILE DETECTION */
   const isMobile = window.innerWidth <= 768;
-
-  /* ✅ HOME PAGE LIMITS */
   const HOME_LIMIT = isMobile ? 3 : 6;
 
+  let $grid = null;
+
+  /* ---------- LOAD NORMAL CERTIFICATES ---------- */
   $.getJSON("./certifications.json", function (data) {
-    if (!data || !data.length) return;
 
-    /* ---------- APPEND CERT CARDS ---------- */
-    $.each(data, function (i, cert) {
-      const categoryClass = cert.category
-        ? cert.category.charAt(0).toUpperCase() + cert.category.slice(1)
-        : "Others";
+    if (data && data.length) {
+      $.each(data, function (i, cert) {
 
-      const description = cert.desc || "";
+        const categoryClass = cert.category
+          ? cert.category.charAt(0).toUpperCase() + cert.category.slice(1)
+          : "Others";
 
-      const card = `
-        <div class="grid-item cert-card ${categoryClass}">
-          <div class="box">
-            <a href="${cert.link}" target="_blank" rel="noopener noreferrer">
-              <img
-                src="../assets/images/certifications/${cert.image}.png"
-                alt="${cert.name}"
-                class="cert-img"
-                draggable="false"
-                onerror="this.src='../assets/images/Tababhi.png'"
-              />
-            </a>
-            <div class="cert-info">
-              <h3>${cert.name}</h3>
-              <p>${description}</p>
-              <a href="${cert.link}" class="btn" target="_blank">
-                <i class="fas fa-eye"></i> View Certificate
+        const description = cert.desc || "";
+
+        const card = `
+          <div class="grid-item cert-card ${categoryClass}">
+            <div class="box">
+              <a href="${cert.link}" target="_blank" rel="noopener noreferrer">
+                <img
+                  src="../assets/images/certifications/${cert.image}.png"
+                  alt="${cert.name}"
+                  class="cert-img"
+                  draggable="false"
+                  onerror="this.src='../assets/images/Tababhi.png'"
+                />
               </a>
+              <div class="cert-info">
+                <h3>${cert.name}</h3>
+                <p>${description}</p>
+                <a href="${cert.link}" class="btn" target="_blank">
+                  <i class="fas fa-eye"></i> View Certificate
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      `;
-      $container.append(card);
-    });
-
-    /* ---------- ISOTOPE INIT ---------- */
-    let $grid = null;
-    if ($.fn.isotope) {
-      $grid = $container.isotope({
-        itemSelector: ".cert-card",
-        layoutMode: "fitRows"
+        `;
+        $container.append(card);
       });
+    }
 
-      const $filters = $("#filters");
-      if ($filters.length) {
-        $filters.on("click", "button", function () {
-          const filterValue = $(this).attr("data-filter");
-          $grid.isotope({ filter: filterValue });
-          $filters.find("button").removeClass("is-checked");
-          $(this).addClass("is-checked");
+    /* ---------- LOAD CREDLY BADGES ---------- */
+    $.getJSON("../assets/badges.json", function (badges) {
+
+      if (badges && badges.length) {
+        $.each(badges, function (i, badge) {
+
+          const card = `
+            <div class="grid-item cert-card Credly">
+              <div class="box">
+                <a href="${badge.url}" target="_blank" rel="noopener noreferrer">
+                  <img
+                    src="${badge.image}"
+                    alt="${badge.name}"
+                    class="cert-img"
+                    draggable="false"
+                    onerror="this.src='../assets/images/Tababhi.png'"
+                  />
+                </a>
+                <div class="cert-info">
+                  <h3>${badge.name}</h3>
+                  <p>Verified Digital Credential</p>
+                  <a href="${badge.url}" class="btn" target="_blank">
+                    <i class="fas fa-shield-alt"></i> View Credential
+                  </a>
+                </div>
+              </div>
+            </div>
+          `;
+          $container.append(card);
         });
       }
-    }
 
-    /* ---------- ✅ FINAL VISIBILITY FIX (ISOTOPE SAFE) ---------- */
-    setTimeout(() => {
-      if (isHomePage) {
-        // HOME PAGE → preview only
-        $(".cert-card").hide();
-        $(".cert-card").slice(0, HOME_LIMIT).show();
-      } else {
-        // CERTIFICATION PAGE → show all
-        $(".cert-card").show();
+      /* ---------- INIT ISOTOPE AFTER ALL CARDS LOADED ---------- */
+      if ($.fn.isotope) {
+        $grid = $container.isotope({
+          itemSelector: ".cert-card",
+          layoutMode: "fitRows"
+        });
+
+        const $filters = $("#filters");
+
+        if ($filters.length) {
+          $filters.on("click", "button", function () {
+            const filterValue = $(this).attr("data-filter");
+            $grid.isotope({ filter: filterValue });
+
+            $filters.find("button").removeClass("is-checked");
+            $(this).addClass("is-checked");
+          });
+        }
       }
 
-      if ($grid) $grid.isotope("layout");
-    }, 100);
+      /* ---------- HOME PAGE LIMIT ---------- */
+      setTimeout(() => {
+        if (isHomePage) {
+          $(".cert-card").hide();
+          $(".cert-card").slice(0, HOME_LIMIT).show();
+        } else {
+          $(".cert-card").show();
+        }
 
-    /* ---------- VIEW ALL BUTTON (CERT PAGE ONLY) ---------- */
-    const $viewAllBtn = $("#view-all-cert");
-    if ($viewAllBtn.length && !isHomePage) {
-      $viewAllBtn.on("click", function () {
-        $(".cert-card").show();
         if ($grid) $grid.isotope("layout");
-        $(this).hide();
-      });
-    }
+      }, 200);
+
+    }).fail(function () {
+      console.error("Failed to load badges.json");
+    });
+
   }).fail(function () {
     console.error("Failed to load certifications.json");
   });
+
 });
 
 /* ==================== CHAT WIDGET ==================== */

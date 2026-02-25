@@ -173,3 +173,213 @@
   }
 
 }
+/* ===== PREMIUM HEADLINE ===== */
+
+.world-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3.5rem, 5vw, 5.5rem);
+  font-weight: 500;
+  line-height: 1.15;
+  text-align: center;
+  margin-bottom: 4rem;
+  color: #eaeaea;
+}
+
+.world-title span {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    #7fa8ff 0%,
+    #5f8cff 40%,
+    #4a78ff 70%,
+    #2f5fff 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* ===== PREMIUM NEON GLOBE BORDER ===== */
+
+.globe-card {
+  position: relative;
+  padding: 4px;
+  border-radius: 70px;
+  background: linear-gradient(
+    135deg,
+    #8a2be2,
+    #4a90e2,
+    #00f0ff
+  );
+}
+
+/* Inner black card */
+.globe-card::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 25px;
+  background: #000;
+  z-index: 0;
+}
+
+/* Strong outer neon glow */
+.globe-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 32px;
+  background: linear-gradient(
+    135deg,
+    #8a2be2,
+    #4a90e2,
+    #00f0ff
+  );
+  filter: blur(25px);
+  opacity: 0.6;
+  z-index: -1;
+}
+
+/* Globe container size */
+.globe-card #react-globe-root {
+  position: relative;
+  z-index: 1;
+  width: 420px;
+  height: 420px;
+  border-radius: 28px;
+  background: #000;
+}
+/* ===== CONTROLLED GLOBE SIZE ===== */
+
+.globe-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 30px;
+}
+
+.globe-card #react-globe-root {
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 1 / 1;   /* keeps it perfectly square */
+  height: auto;          /* remove fixed height */
+  border-radius: 26px;
+}
+/* ===== ALIGN ALL THREE CARDS ===== */
+
+.globe-section {
+  display: flex;
+  align-items: center;   /* KEY FIX */
+  justify-content: center;
+  gap: 3rem;
+}
+
+.info-card {
+  display: flex;
+}
+/* ===== FIX CARD HEIGHT ALIGNMENT ===== */
+
+.info-card,
+.globe-modern {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thisisme-card,
+.social-card,
+.modern-globe-card {
+  height: 460px;       /* Equal height for all 3 */
+}
+.modern-globe-card {
+  width: 420px;
+  height: 460px;
+  padding: 4px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #7b2ff7, #00e5ff);
+  box-shadow:
+    0 0 25px rgba(0, 200, 255, 0.4),
+    0 0 50px rgba(123, 47, 247, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modern-globe-card #react-globe-root {
+  width: 460px;
+  height: 500px;
+  border-radius: 25px;
+}
+@media (max-width: 992px) {
+
+  .globe-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .thisisme-card,
+  .social-card,
+  .modern-globe-card {
+    width: 100%;
+    height: auto;
+  }
+
+  .modern-globe-card #react-globe-root {
+    width: 0%;
+    max-width: 320px;
+    height: 320px;
+  }
+
+}
+/* ================= PERFECTLY ALIGNED NEON GLOBE ================= */
+
+.modern-globe-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1 / 1.15;
+  border-radius: 32px;
+}
+
+/* OUTER GLOW */
+.modern-globe-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 32px;
+  background: linear-gradient(135deg,#7b2ff7,#00e5ff);
+  filter: blur(30px);
+  opacity: 0.55;
+  z-index: -2;
+}
+
+/* GRADIENT BORDER (NO PADDING METHOD) */
+.modern-globe-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 32px;
+  background: linear-gradient(135deg,#7b2ff7,#00e5ff);
+  z-index: -1;
+}
+
+/* INNER BLACK CARD */
+.modern-globe-card #react-globe-root {
+  position: absolute;
+  inset: 4px;                /* THIS creates perfect border thickness */
+  border-radius: 28px;       /* 32 - 4 = 28 (important math) */
+  background: #000;
+}
+/* ================= FIX DOUBLE BLACK LAYER ================= */
+
+.modern-globe-card {
+  overflow: hidden;   /* CLIPS any extra canvas */
+}
+
+.modern-globe-card #react-globe-root {
+  overflow: hidden;   /* Prevent inner overflow */
+}
+#react-globe-root > * {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 28px !important;
+}
