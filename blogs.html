@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Abinash's Dev.to Blogs</title>
+  <title>Abinash's Dev.to Blogs</title>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" crossorigin href="./assets/blogs-lm6uK-f2.css">
 </head>
@@ -35,10 +36,10 @@
   function renderTags() {
     const tags = [...new Set(allBlogs.flatMap(b => b.tag_list))].slice(0, 12);
     const container = document.getElementById("tagContainer");
-    container.innerHTML = tags.map(tag => 
+    container.innerHTML = tags.map(tag =>
       `<span class="tag" data-tag="${tag}">#${tag}</span>`
     ).join("");
-    
+
     container.querySelectorAll(".tag").forEach(tagEl => {
       tagEl.addEventListener("click", () => {
         document.querySelectorAll(".tag").forEach(t => t.classList.remove("active"));
@@ -51,7 +52,7 @@
   function renderBlogs() {
     const searchText = document.getElementById("searchInput").value.toLowerCase();
     const activeTag = document.querySelector(".tag.active")?.dataset.tag;
-    
+
     const filtered = allBlogs.filter(blog => {
       const matchesSearch = blog.title.toLowerCase().includes(searchText);
       const matchesTag = activeTag ? blog.tag_list.includes(activeTag) : true;

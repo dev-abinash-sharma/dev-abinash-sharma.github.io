@@ -434,3 +434,111 @@ reposContainer.innerHTML = repos
   });
 
 // scrollanimate
+
+
+
+/* ===========================================
+   Travel Gallery + Latest YouTube Videos
+=========================================== */
+
+const galleryBtn = document.getElementById("travelGalleryBtn");
+if (galleryBtn) {
+    galleryBtn.addEventListener("click", () => {
+        window.location.href = "travel-gallery.html";
+    });
+}
+
+
+/* ===========================
+   Cloudinary Images
+=========================== */
+
+async function loadTravelImages() {
+
+    const imageContainer = document.getElementById("travelImages");
+    if (!imageContainer) return;
+
+    imageContainer.innerHTML = "<p>Loading Images...</p>";
+
+    try {
+
+        const response = await fetch(
+            "https://portfolio-gallery-api.abinasharma001.workers.dev"
+        );
+
+        const images = await response.json();
+
+        imageContainer.innerHTML = "";
+
+        images.forEach(img => {
+
+            imageContainer.innerHTML += `
+                <div class="travel-card">
+                    <img src="${img.thumbnail}" alt="${img.title}">
+                </div>
+            `;
+
+        });
+
+    } catch (err) {
+
+        imageContainer.innerHTML =
+            "<p>Unable to load images.</p>";
+
+        console.error(err);
+
+    }
+
+}
+
+
+/* ===========================
+   Latest YouTube Videos
+=========================== */
+
+async function loadYoutubeVideos() {
+
+    const youtubeContainer = document.getElementById("youtubeVideos");
+    if (!youtubeContainer) return;
+
+    youtubeContainer.innerHTML = "<p>Loading Videos...</p>";
+
+    try {
+
+        const response = await fetch(
+            "https://youtube-feed-api.abinasharma001.workers.dev"
+        );
+
+        const videos = await response.json();
+
+        youtubeContainer.innerHTML = "";
+
+        videos.slice(0, 6).forEach(video => {
+
+            youtubeContainer.innerHTML += `
+                <div class="video-card">
+
+                    <iframe
+                        src="https://www.youtube.com/embed/${video.id}"
+                        title="${video.title}"
+                        loading="lazy"
+                        allowfullscreen>
+                    </iframe>
+
+                    <h4>${video.title}</h4>
+
+                </div>
+            `;
+
+        });
+
+    } catch (err) {
+
+        youtubeContainer.innerHTML =
+            "<p>Unable to load videos.</p>";
+
+        console.error(err);
+
+    }
+
+}

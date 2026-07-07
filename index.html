@@ -273,6 +273,85 @@
   <!-- about section ends -->
 
   <!-- skills section starts -->
+  <style>
+    .tech-stack-section {
+      overflow: hidden;
+      isolation: isolate;
+      contain: layout paint;
+    }
+
+    .tech-stack-section .slider-container {
+      overflow: hidden;
+    }
+
+    .tech-stack-section .slider-track,
+    .tech-stack-section .slider-track-2 {
+      animation-duration: var(--tech-duration, 24s);
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      will-change: transform;
+      backface-visibility: hidden;
+      flex-wrap: nowrap;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .tech-stack-section .slider-track {
+      animation-name: techStackScroll;
+    }
+
+    .tech-stack-section .slider-track-2 {
+      animation-name: techStackScrollReverse;
+    }
+
+    .tech-stack-section .slider-track:hover,
+    .tech-stack-section .slider-track-2:hover {
+      animation-play-state: running;
+    }
+
+    .tech-stack-section .tech-item {
+      flex: 0 0 auto;
+    }
+
+    @keyframes techStackScroll {
+      from {
+        transform: translate3d(0, 0, 0);
+      }
+
+      to {
+        transform: translate3d(calc(-1 * var(--tech-distance, 0px)), 0, 0);
+      }
+    }
+
+    @keyframes techStackScrollReverse {
+      from {
+        transform: translate3d(calc(-1 * var(--tech-distance, 0px)), 0, 0);
+      }
+
+      to {
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .tech-stack-section .slider-container {
+        padding: 12px 0;
+      }
+
+      .tech-stack-section .slider-track,
+      .tech-stack-section .slider-track-2 {
+        gap: 28px;
+      }
+
+      .tech-stack-section .tech-icon {
+        transform: translateZ(0);
+      }
+
+      .tech-stack-section .particle {
+        display: none;
+      }
+    }
+  </style>
+
   <section class="tech-stack-section" id="skills">
     <div class="particle"></div>
     <div class="particle"></div>
@@ -805,7 +884,7 @@
           <img src="./assets/circleabhi-CsDY8YWV.webp" alt="Profile" class="profile-pic">
 
           <h2>Watch me on YouTube</h2>
-          <p>I talk about webdev & stuff</p>
+          <p>🌍 Explore • Travel • Food • Adventures</p>
 
           <button class="youtube-btn">
             YouTube Channel
@@ -824,7 +903,7 @@
   <!-- Blog Section -->
   <section class="blog" id="blog">
     <h2 class="heading">
-      <i class="fab fa-dev"></i> My <span class="gradient-text">Blogs</span>
+      <i class="fab fa-dev"></i> <span class="gradient-text">Creator Hub</span>
     </h2>
 
 
@@ -839,13 +918,25 @@
 
     <!-- Load More Button -->
     <!-- View More Button -->
-    <div class="view-more">
-      <a href="blogs.html" class="btn hoverable">
-        <span>View More</span> <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
-  </section>
-  <!-- blog section end -->
+  <div class="blog-buttons">
+    <a href="blogs.html" class="btn hoverable">
+      <span>View More</span>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+
+    <a href="travel-gallery.html" class="btn hoverable" id="travelGalleryBtn">
+      <i class="fas fa-camera-retro"></i>
+      Travel Gallery
+    </a>
+
+    <a href="youtube-videos.html" class="btn hoverable">
+      <i class="fab fa-youtube"></i>
+      YouTube Videos
+    </a>
+  </div>
+
+</section>
+<!-- blog section end -->
   <!-- === Bhagavad Gita Section === -->
   <!-- “Video concept created using my original script. Generated with the help of Google Veo.” -->
   <section class="gita-section">
@@ -1272,7 +1363,7 @@
   </div>
 
   <!-- === GSAP and Cursor Script === -->
-  <!-- 
+  <!--
 Custom cursor animation originally by Clement Girault
 Modernized and made adaptive by Abinash (2025)
 Original CodePen: https://codepen.io/clementGir/pen/RQqvQx
@@ -1307,6 +1398,58 @@ Licensed under the MIT License
   </script>
   <script>
     // Ensure music stays paused on page load
+    let autoScrollTimer = null;
+
+    function updateMusicButtonState(btn, isPlaying) {
+      if (!btn) return;
+
+      btn.classList.toggle("active", isPlaying);
+
+      const icon = btn.querySelector("i");
+      if (icon) {
+        icon.classList.toggle("fa-play", !isPlaying);
+        icon.classList.toggle("fa-pause", isPlaying);
+      }
+    }
+
+    function stopAutoScroll() {
+      if (autoScrollTimer) {
+        clearInterval(autoScrollTimer);
+        autoScrollTimer = null;
+      }
+    }
+
+    function stopMusicAndAutoScroll() {
+      const music = document.getElementById("bgMusic");
+      const btn = document.querySelector('.music-btn');
+
+      stopAutoScroll();
+
+      if (music) {
+        music.pause();
+        music.volume = 1;
+      }
+
+      updateMusicButtonState(btn, false);
+    }
+
+    function startAutoScroll() {
+      if (!document.getElementById("home")) return;
+
+      stopAutoScroll();
+
+      autoScrollTimer = setInterval(() => {
+        const maxScrollY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight - 1);
+
+        if (window.scrollY >= maxScrollY) {
+          stopMusicAndAutoScroll();
+          return;
+        }
+
+        window.scrollBy(0, 1);
+      }, 18);
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       const music = document.getElementById("bgMusic");
       const btn = document.querySelector('.music-btn');
@@ -1314,19 +1457,11 @@ Licensed under the MIT License
       music.pause();
       music.volume = 1;
 
-      if (btn) {
-        btn.classList.remove("active");
-        const icon = btn.querySelector("i");
-        if (icon) {
-          icon.classList.remove("fa-pause");
-          icon.classList.add("fa-play");
-        }
-      }
+      updateMusicButtonState(btn, false);
     });
 
     function toggleMusic(btn) {
       const music = document.getElementById("bgMusic");
-      const icon = btn.querySelector("i");
 
       if (!music) {
         console.error("Music element not found!");
@@ -1342,31 +1477,27 @@ Licensed under the MIT License
         if (playPromise !== undefined) {
           playPromise.then(() => {
             console.log("Music started playing successfully");
-            btn.classList.add("active");
-            icon.classList.remove("fa-play");
-            icon.classList.add("fa-pause");
+            updateMusicButtonState(btn, true);
+            startAutoScroll();
           }).catch(error => {
             console.error("Error playing music:", error);
             alert("Unable to play music. Please check:\n1. Audio file exists\n2. Browser allows autoplay\n3. File format is supported");
           });
         }
       } else {
-        // Gradually fade out the music before pausing
-        let fade = setInterval(() => {
-          if (music.volume > 0.05) {
-            music.volume -= 0.05;
-          } else {
-            clearInterval(fade);
-            music.pause();
-            music.volume = 1; // reset for next play
-            btn.classList.remove("active");
-            icon.classList.remove("fa-pause");
-            icon.classList.add("fa-play");
-            console.log("Music paused");
-          }
-        }, 50);
+        stopMusicAndAutoScroll();
+        console.log("Music paused");
       }
     }
+
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!target.closest('button, .btn') || target.closest('.music-btn')) {
+        return;
+      }
+
+      stopMusicAndAutoScroll();
+    }, true);
   </script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -1436,15 +1567,55 @@ Licensed under the MIT License
     setInterval(nextSlide, 5000);
   </script>
   <script>
-    // Duplicate the tracks for infinite scroll
     function duplicateTrack(trackId) {
       const track = document.getElementById(trackId);
-      const items = track.innerHTML;
-      track.innerHTML += items;
+      if (!track || track.dataset.duplicated === 'true') return;
+
+      const items = Array.from(track.children);
+      track.dataset.originalCount = items.length;
+      items.forEach((item) => {
+        const clone = item.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        track.appendChild(clone);
+      });
+      track.dataset.duplicated = 'true';
     }
 
     duplicateTrack('track1');
     duplicateTrack('track2');
+
+    function setupTechStackMarquee(trackId, speed) {
+      const track = document.getElementById(trackId);
+      if (!track) return;
+
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) {
+        track.style.animation = 'none';
+        track.style.transform = 'translate3d(0, 0, 0)';
+        return;
+      }
+
+      const originalCount = Number(track.dataset.originalCount || 0);
+      const firstDuplicate = track.children[originalCount];
+      const loopWidth = firstDuplicate ? firstDuplicate.offsetLeft : track.scrollWidth / 2;
+      if (!loopWidth) return;
+
+      track.style.animation = 'none';
+      track.style.setProperty('--tech-distance', `${loopWidth}px`);
+      track.style.setProperty('--tech-duration', `${Math.max(10, loopWidth / speed)}s`);
+      track.offsetHeight;
+      track.style.animation = '';
+    }
+
+    function refreshTechStackMarquees() {
+      const speed = window.innerWidth <= 768 ? 110 : 170;
+      setupTechStackMarquee('track1', speed);
+      setupTechStackMarquee('track2', speed);
+    }
+
+    window.addEventListener('load', refreshTechStackMarquees);
+    window.addEventListener('resize', refreshTechStackMarquees);
+    refreshTechStackMarquees();
   </script>
   <!-- Scroll Progress Bar Script -->
   <script>
