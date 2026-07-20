@@ -57,7 +57,7 @@ $(document).ready(function () {
             <div class="box">
               <a href="${cert.link}" target="_blank" rel="noopener noreferrer">
                 <img
-                  src="../assets/images/certifications/${cert.image}.png"
+                  src="../assets/images/certifications/${cert.image}.webp"
                   alt="${cert.name}"
                   class="cert-img"
                   draggable="false"

@@ -127,7 +127,7 @@ function showProjects(projects) {
             html += `
             <div class="box tilt">
                 <img draggable="false"
-                     src="./assets/images/projects/${project.image}.png"
+                     src="./assets/images/projects/${project.image}.webp"
                      alt="${project.name}" />
                 <div class="content">
                     <div class="tag">
@@ -189,7 +189,7 @@ function showCertifications(certificates) {
         html += `
         <div class="grid-item cert-card ${cert.category}">
             <div class="box tilt">
-                <img src="./assets/images/certifications/${cert.image}.png" alt="${cert.name}">
+                <img src="./assets/images/certifications/${cert.image}.webp" alt="${cert.name}">
                 <div class="content">
                     <div class="tag"><h3>${cert.name}</h3></div>
                     <div class="desc">

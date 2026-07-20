@@ -56,7 +56,7 @@ function showProjects(projects) {
             ? project.category.join(' ')
             : project.category;
 
-        const imagePath = `../assets/images/projects/${project.image}.png`;
+        const imagePath = `../assets/images/projects/${project.image}.webp`;
         console.log('Loading image:', imagePath); // 🔍 Debug log
 
         projectsHTML += `

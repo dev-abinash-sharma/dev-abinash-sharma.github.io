@@ -446,3 +446,544 @@
     font-size:15px;
     line-height:1.4;
 }
+/* ================================
+   SOCIAL / GITHUB / YOUTUBE SECTION
+================================ */
+
+.socard-container{
+    max-width:1400px;
+    margin:60px auto;
+    padding:0 20px;
+
+    display:grid;
+    grid-template-columns:520px 1fr;
+    gap:35px;
+
+    align-items:stretch;
+}
+
+/* LEFT SIDE */
+
+.left-section{
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+}
+
+/* ================= GITHUB CARD ================= */
+
+.github-card{
+
+    width:100%;
+    height:300px;
+
+    display:flex;
+    align-items:center;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    text-decoration:none;
+
+    background:#000;
+
+    color:white;
+
+    box-sizing:border-box;
+
+    transition:.3s;
+}
+
+.github-card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+.github-icon{
+
+    width:70px;
+    height:70px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+    background:white;
+
+    flex-shrink:0;
+}
+
+.github-icon svg{
+
+    width:42px;
+    height:42px;
+
+}
+
+.github-info{
+
+    margin-left:25px;
+
+}
+
+.github-info h3{
+
+    font-size:26px;
+
+    margin-bottom:8px;
+
+}
+
+.github-info p{
+
+    font-size:15px;
+
+    opacity:.9;
+
+}
+
+.external-link{
+
+    margin-left:auto;
+
+}
+
+/* ================= SOCIAL CARD ================= */
+
+.social-carousel{
+
+    width:100%;
+    height:300px;
+
+    overflow:hidden;
+
+    border-radius:20px;
+
+    position:relative;
+
+}
+
+.carousel-container{
+
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
+
+}
+
+.carousel-track{
+
+    display:flex;
+
+    width:100%;
+    height:100%;
+
+    transition:.4s ease;
+
+}
+
+.oksocial-card{
+
+    flex:0 0 100%;
+
+    width:100%;
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    align-items:center;
+    justify-content:center;
+
+    text-decoration:none;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    box-sizing:border-box;
+
+}
+
+.oksocial-icon{
+
+    width:75px;
+    height:75px;
+
+    margin-bottom:18px;
+
+}
+
+.oksocial-card h3{
+
+    font-size:28px;
+
+    margin-bottom:10px;
+
+    color:white;
+
+}
+
+.oksocial-card p{
+
+    font-size:16px;
+
+    color:white;
+
+}
+
+/* Backgrounds */
+
+.oksocial-card.linkedin{
+
+    background:#0A66C2;
+
+}
+
+.oksocial-card.instagram{
+
+    background:linear-gradient(
+        135deg,
+        #F09433,
+        #E6683C,
+        #DC2743,
+        #CC2366,
+        #BC1888
+    );
+
+}
+
+.oksocial-card.youtube{
+
+    background:#ff0000;
+
+}
+
+.oksocial-card.twitter{
+
+    background:#111;
+
+}
+
+.oksocial-card.facebook{
+
+    background:#1877F2;
+
+}
+
+/* arrows */
+
+.carousel-nav{
+
+    position:absolute;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:42px;
+    height:42px;
+
+    border-radius:50%;
+
+    background:rgba(0,0,0,.5);
+
+    color:white;
+
+    border:none;
+
+    cursor:pointer;
+
+    z-index:5;
+
+}
+
+.prev{
+
+    left:12px;
+
+}
+
+.next{
+
+    right:12px;
+
+}
+
+/* ================= RIGHT SIDE ================= */
+
+.right-section{
+
+    display:flex;
+
+    height:100%;
+
+}
+
+.youtube-card{
+
+    width:100%;
+    height:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+
+    border-radius:30px;
+
+    padding:40px;
+
+    text-decoration:none;
+
+    color:white;
+
+    background:linear-gradient(180deg,#7c3aed,#ec4899);
+
+    box-sizing:border-box;
+
+    transition:.3s;
+
+}
+
+.youtube-card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+.profile-pic{
+
+    width:200px;
+    height:200px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:5px solid white;
+
+    margin-bottom:30px;
+
+}
+
+.youtube-card h2{
+
+    font-size:40px;
+
+    margin-bottom:15px;
+
+}
+
+.youtube-card p{
+
+    font-size:20px;
+
+    margin-bottom:40px;
+
+}
+
+.youtube-btn{
+
+    padding:18px 45px;
+
+    border-radius:50px;
+
+    border:2px solid white;
+
+    background:transparent;
+
+    color:white;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:992px){
+
+.socard-container{
+
+grid-template-columns:1fr;
+
+}
+
+.right-section{
+
+height:650px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.github-card,
+.social-carousel{
+
+height:280px;
+
+}
+
+.youtube-card{
+
+height:600px;
+
+padding:30px;
+
+}
+
+.profile-pic{
+
+width:150px;
+height:150px;
+
+}
+
+.youtube-card h2{
+
+font-size:30px;
+
+}
+
+.youtube-card p{
+
+font-size:17px;
+
+}
+
+}
+/* ===========================
+   MOBILE FIX
+=========================== */
+@media (max-width:768px){
+
+  .socard-container{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:30px;
+  }
+
+  .left-section,
+  .right-section{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    height:auto !important;
+  }
+
+  /* GitHub Card */
+  .github-card{
+    width:min(92vw,380px) !important;
+    height:220px !important;
+    max-width:380px !important;
+    margin:0 auto !important;
+
+    border-radius:20px;
+    box-sizing:border-box;
+
+    background:#000 !important;
+    color:#fff !important;
+  }
+
+  /* Social Carousel */
+  .social-carousel{
+    width:min(92vw,380px) !important;
+    height:220px !important;
+    max-width:380px !important;
+    margin:20px auto 0 !important;
+
+    border-radius:20px;
+    overflow:hidden;
+    box-sizing:border-box;
+  }
+
+  .carousel-container{
+    width:100%;
+    height:100%;
+  }
+
+  .carousel-track{
+    height:100%;
+  }
+
+  .oksocial-card{
+    width:100% !important;
+    min-width:100% !important;
+    height:220px !important;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    box-sizing:border-box;
+  }
+
+  /* Navigation Buttons */
+  .carousel-nav{
+    width:36px;
+    height:36px;
+    font-size:22px;
+    z-index:5;
+  }
+
+  .carousel-nav.prev{
+    left:8px;
+  }
+
+  .carousel-nav.next{
+    right:8px;
+  }
+
+  /* YouTube Card */
+  .youtube-card{
+    width:min(92vw,380px) !important;
+    max-width:380px !important;
+    min-height:420px !important;
+    height:auto !important;
+
+    margin:0 auto !important;
+    padding:30px 20px !important;
+    box-sizing:border-box;
+  }
+
+  .youtube-card .profile-pic{
+    width:110px;
+    height:110px;
+    margin-bottom:20px;
+  }
+
+  .youtube-card h2{
+    font-size:2.9rem;
+    line-height:1.2;
+    text-align:center;
+  }
+
+  .youtube-card p{
+    font-size:1.6rem;
+    line-height:1.6;
+    text-align:center;
+    padding:0 10px;
+  }
+
+  .youtube-btn{
+    width:90%;
+    max-width:260px;
+    margin-top:25px;
+  }
+
+}

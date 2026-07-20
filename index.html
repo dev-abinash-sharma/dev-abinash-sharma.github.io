@@ -10,16 +10,26 @@
   <meta name="description" content="Welcome to Abinash's Portfolio. Python Developer and Xtended Reality Developer" />
   <!-- Custom CSS -->
 
+  <!-- Preconnect to third-party origins so the browser can start the
+       connection (DNS+TLS) early instead of waiting until each resource
+       is discovered, which shaves noticeable time off first paint. -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
   <!-- Favicon -->
-  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <!-- defer: not needed until the loader/robot animations run, so it must
+       not block HTML parsing/first paint -->
+  <script defer src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <link id="favicon" rel="icon" type="image/png" href="./assets/Tababhi-DhQ-9upT.webp">
   <title>Abinash Sharma | Software Developer Portfolio</title>
-  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.3.11/bundled/lenis.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.3.11/bundled/lenis.min.js"></script>
   <script type="module" crossorigin src="./assets/main-DPHHwEYh.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/main-C_yYovMB.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
@@ -33,7 +43,7 @@
   <!-- Loader -->
   <!-- Loader -->
   <div class="loader">
-    <lottie-player id="rocket" src="./assets/images/loader.json" background="transparent" speed="1"
+    <lottie-player id="rocket" src="./assets/images/loader.json" background="transparent" speed="1.3"
       style="width:300px; height:300px;" loop autoplay>
     </lottie-player>
   </div>
@@ -84,9 +94,12 @@
       <!-- 🎵 Music Button (Spotify Style) -->
       <div class="music-btn" onclick="toggleMusic(this)">
         <i class="fas fa-play"></i>
+        <span class="music-tooltip">Auto Scroll &amp; Music</span>
       </div>
     </div>
-    <audio id="bgMusic" src="./assets/images/virus.mp3" loop></audio>
+    <!-- preload="none": this 695KB mp3 should only be fetched once the user
+         actually presses play, not on initial page load -->
+    <audio id="bgMusic" src="./assets/images/virus.mp3" loop preload="none"></audio>
   </header>
   <!-- navbar ends -->
 
@@ -219,12 +232,100 @@
   <!-- Globe section ends -->
 
   <!-- about section starts -->
-  <section class="about" id="about">
-    <!--  Lottie Background -->
-    <lottie-player src="./assets/images/Background.json" background="transparent" speed="1" loop autoplay
-      class="bg-lottie">
-    </lottie-player>
+  <style>
+    .about .about-bg-anim {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background: #2f0024;
+      pointer-events: none;
+    }
 
+    .about .about-bg-anim::before,
+    .about .about-bg-anim::after {
+      content: '';
+      position: absolute;
+      top: -30%;
+      width: 55%;
+      height: 160%;
+      background: radial-gradient(circle at center, rgba(150, 0, 120, .5), rgba(47, 0, 36, 0) 70%);
+      filter: blur(45px);
+      will-change: transform;
+      transform: translateX(0) translateZ(0);
+      animation: aboutGlowMove 14s ease-in-out infinite;
+    }
+
+    .about .about-bg-anim::before {
+      left: -20%;
+    }
+
+    .about .about-bg-anim::after {
+      left: -20%;
+      animation-delay: -7s;
+      background: radial-gradient(circle at center, rgba(80, 0, 90, .45), rgba(47, 0, 36, 0) 70%);
+    }
+
+    @keyframes aboutGlowMove {
+      0% {
+        transform: translateX(0) translateZ(0);
+      }
+
+      50% {
+        transform: translateX(220%) translateZ(0);
+      }
+
+      100% {
+        transform: translateX(0) translateZ(0);
+      }
+    }
+
+    .about .heading,
+    .about .row {
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .about .about-bg-anim::before,
+      .about .about-bg-anim::after {
+        animation: none;
+      }
+    }
+
+    /* Music button hover tooltip */
+    .music-btn {
+      position: relative;
+    }
+
+    .music-btn .music-tooltip {
+      position: absolute;
+      top: 130%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-4px);
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+      z-index: 10;
+    }
+
+    .music-btn:hover .music-tooltip,
+    .music-btn:focus-visible .music-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+  <section class="about" id="about">
+    <!-- Lightweight CSS background: dark base + GPU-composited moving glow (no JS, no image assets) -->
+    <div class="about-bg-anim"></div>
 
     <h2 class="heading"><i class="fas fa-user-alt"></i> About <span>Me</span></h2>
 
@@ -274,83 +375,202 @@
 
   <!-- skills section starts -->
   <style>
+    /* ===== Tech Stack Bubble Cloud — container & background ===== */
     .tech-stack-section {
       overflow: hidden;
       isolation: isolate;
       contain: layout paint;
+      position: relative;
+      background: #f0ede6 !important;
+      padding: 90px 0 !important;
     }
 
-    .tech-stack-section .slider-container {
-      overflow: hidden;
+    body.dark-mode .tech-stack-section {
+      background: #121212 !important;
     }
 
-    .tech-stack-section .slider-track,
-    .tech-stack-section .slider-track-2 {
-      animation-duration: var(--tech-duration, 24s);
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
+    .tech-stack-section:before {
+      /* soft golden glow overlay (replaces old red glow) */
+      content: "" !important;
+      background:
+        radial-gradient(circle at 15% 25%, rgba(212, 175, 55, .16) 0%, transparent 55%),
+        radial-gradient(circle at 85% 75%, rgba(212, 175, 55, .14) 0%, transparent 55%) !important;
+    }
+
+    .tech-stack-section .section-title .tech {
+      color: #2f2417;
+    }
+
+    /* ===== Golden ambient particles ===== */
+    .tech-stack-section .particle {
+      background: #d4af37 !important;
+      box-shadow: 0 0 6px 1px rgba(212, 175, 55, .6);
+      opacity: .55 !important;
+    }
+
+    /* ===== Cloud layout ===== */
+    .tech-cloud {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 14px 18px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 10px 16px;
+    }
+
+    .tech-item {
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px !important;
+      min-width: 0 !important;
+      position: relative;
+      cursor: pointer;
       will-change: transform;
-      backface-visibility: hidden;
-      flex-wrap: nowrap;
       transform: translate3d(0, 0, 0);
+      z-index: 1;
     }
 
-    .tech-stack-section .slider-track {
-      animation-name: techStackScroll;
+    /* hovered/focused bubble becomes the anchor and always renders on top */
+    .tech-item.is-anchor {
+      z-index: 20;
     }
 
-    .tech-stack-section .slider-track-2 {
-      animation-name: techStackScrollReverse;
+    .tech-item.is-clustered {
+      z-index: 8;
     }
 
-    .tech-stack-section .slider-track:hover,
-    .tech-stack-section .slider-track-2:hover {
-      animation-play-state: running;
+    .tech-item:focus-visible {
+      outline: 2px solid #d4af37;
+      outline-offset: 4px;
+      border-radius: 50%;
     }
 
-    .tech-stack-section .tech-item {
-      flex: 0 0 auto;
+    /* subtle nth-child vertical stagger for an organic, non-grid cloud feel */
+    .tech-item:nth-child(3n) {
+      margin-top: 18px;
     }
 
-    @keyframes techStackScroll {
-      from {
-        transform: translate3d(0, 0, 0);
+    .tech-item:nth-child(4n) {
+      margin-top: -14px;
+    }
+
+    .tech-item:nth-child(5n) {
+      margin-top: 8px;
+    }
+
+    /* floating loop — isolated on its own layer so it never fights hover/magnet transforms */
+    .bubble-float {
+      animation: cloudFloat 6s ease-in-out infinite;
+      animation-delay: var(--float-delay, 0s);
+      will-change: transform;
+    }
+
+    .tech-item:nth-child(2n) .bubble-float {
+      animation-duration: 7.5s;
+    }
+
+    .tech-item:nth-child(3n) .bubble-float {
+      animation-duration: 5.2s;
+    }
+
+    @keyframes cloudFloat {
+      0%, 100% {
+        transform: translateY(0);
       }
 
-      to {
-        transform: translate3d(calc(-1 * var(--tech-distance, 0px)), 0, 0);
+      50% {
+        transform: translateY(-10px);
       }
     }
 
-    @keyframes techStackScrollReverse {
-      from {
-        transform: translate3d(calc(-1 * var(--tech-distance, 0px)), 0, 0);
-      }
-
-      to {
-        transform: translate3d(0, 0, 0);
-      }
+    /* glass bubble */
+    .tech-stack-section .tech-icon {
+      width: var(--bubble-size, 90px) !important;
+      height: var(--bubble-size, 90px) !important;
+      border-radius: 50% !important;
+      background: linear-gradient(160deg, rgba(255, 255, 255, .85), rgba(255, 255, 255, .35)) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      backdrop-filter: blur(12px) !important;
+      border: 1px solid rgba(255, 255, 255, .8) !important;
+      box-shadow:
+        0 8px 22px rgba(120, 90, 30, .18),
+        inset 0 2px 6px rgba(255, 255, 255, .9),
+        inset 0 -6px 10px rgba(180, 140, 60, .12);
+      transition: border-color .25s ease, opacity .25s ease;
     }
+
+    .tech-stack-section .tech-icon svg,
+    .tech-stack-section .tech-icon img {
+      width: 62% !important;
+      height: 62% !important;
+    }
+
+    .tech-stack-section .tech-name {
+      color: #2f2417 !important;
+      font-size: 13px !important;
+      font-weight: 600;
+      opacity: .85;
+      transition: opacity .25s ease;
+    }
+
+    /* anchor bubble: fixed size, just a subtle border highlight + always on top (no scale/glow enlargement) */
+    .tech-item.is-anchor .tech-icon {
+      border-color: rgba(212, 175, 55, .9) !important;
+    }
+
+    .tech-item.is-anchor .tech-name {
+      opacity: 1;
+    }
+
+    /* bubble sizes */
+    .tech-item.size-xl { --bubble-size: 140px; }
+    .tech-item.size-lg { --bubble-size: 108px; }
+    .tech-item.size-md { --bubble-size: 84px; }
+    .tech-item.size-sm { --bubble-size: 66px; }
+
+    .tech-item.size-xl .tech-name { font-size: 15px !important; }
+    .tech-item.size-sm .tech-name { font-size: 11px !important; }
 
     @media (max-width: 768px) {
-      .tech-stack-section .slider-container {
-        padding: 12px 0;
+      .tech-cloud {
+        gap: 10px 12px;
       }
 
-      .tech-stack-section .slider-track,
-      .tech-stack-section .slider-track-2 {
-        gap: 28px;
-      }
+      .tech-item.size-xl { --bubble-size: 96px; }
+      .tech-item.size-lg { --bubble-size: 78px; }
+      .tech-item.size-md { --bubble-size: 62px; }
+      .tech-item.size-sm { --bubble-size: 50px; }
 
-      .tech-stack-section .tech-icon {
-        transform: translateZ(0);
+      .tech-item:nth-child(3n),
+      .tech-item:nth-child(4n),
+      .tech-item:nth-child(5n) {
+        margin-top: 0;
       }
 
       .tech-stack-section .particle {
         display: none;
       }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bubble-float {
+        animation: none;
+      }
+
+      .tech-cloud {
+        transition: none;
+      }
+    }
   </style>
+
+  <!-- Note: bubble movement (magnetic cluster + cursor parallax) is driven entirely by
+       requestAnimationFrame in JS (see script near the end of the page), animating only
+       `transform` on .tech-item so it never fights a CSS transition. -->
 
   <section class="tech-stack-section" id="skills">
     <div class="particle"></div>
@@ -364,61 +584,102 @@
       <span class="tech">Tech</span> <span class="stack">Stack</span>
     </h2>
 
-    <!-- First Row -->
-    <div class="slider-container">
-      <div class="slider-track" id="track1">
+    <!-- Tech Stack Bubble Cloud -->
+    <div class="tech-cloud" id="techCloud">
 
-        <div class="tech-item">
-          <div class="tech-icon" style="background:#1e1e1e; border-radius:14px;">
-            <!-- API icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60" aria-hidden="true">
-              <circle cx="12" cy="32" r="5" fill="#4A90E2" />
-              <circle cx="52" cy="32" r="5" fill="#4A90E2" />
-              <circle cx="32" cy="12" r="5" fill="#4A90E2" />
-              <circle cx="32" cy="52" r="5" fill="#4A90E2" />
-              <path fill="none" stroke="#4A90E2" stroke-width="3" stroke-linecap="round"
-                d="M12 32L32 12L52 32L32 52Z" />
-              <text x="22" y="37" font-family="Arial, sans-serif" font-size="10" fill="#ffffff"
-                font-weight="700">API</text>
-            </svg>
-          </div>
-          <div class="tech-name">API</div>
-        </div>
-
-
-
-
-        <div class="tech-item">
-          <div class="tech-icon" style="background:#0f0b10; border-radius:14px;">
-            <!-- Official Google "G" logo -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="60" height="60" aria-hidden="true">
-              <path fill="#EA4335"
-                d="M24 9.5c3.5 0 6.3 1.2 8.2 2.9l6.1-6.1C34.4 3.5 29.6 2 24 2 14.8 2 6.9 7.7 3.2 15.5l7.1 5.5C11.8 13.6 17.3 9.5 24 9.5z" />
-              <path fill="#34A853"
-                d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.8-2 5.1-4.3 6.7l6.6 5.1c3.9-3.6 6.4-8.9 6.4-16.3z" />
-              <path fill="#4A90E2"
-                d="M10.3 28.1a14.4 14.4 0 0 1-.7-4.6c0-1.6.3-3.1.7-4.6l-7.1-5.5C2.4 16.6 2 20.2 2 23.5s.4 6.9 1.2 10.1l7.1-5.5z" />
-              <path fill="#FBBC05"
-                d="M24 46c5.6 0 10.3-1.8 13.7-5l-6.6-5.1c-1.8 1.2-4 1.9-7.1 1.9-6.7 0-12.2-4.1-14.4-9.8l-7.1 5.5C6.9 40.3 14.8 46 24 46z" />
-            </svg>
-          </div>
-          <div class="tech-name">Google Cloud</div>
-        </div>
-
-        <div class="tech-item">
+      <div class="tech-item size-xl" tabindex="0" aria-label="Python">
+        <div class="bubble-float">
           <div class="tech-icon">
-            <svg viewBox="0 0 24 24" width="60" height="60" fill="#F05032">
+            <svg viewBox="0 0 24 24" fill="#4B8BBE" aria-hidden="true">
               <path
-                d="M23.546 10.93L13.067.452c-.604-.603-1.582-.603-2.188 0L8.708 2.627l2.76 2.76c.645-.215 1.379-.07 1.889.441.516.515.658 1.258.438 1.9l2.658 2.66c.645-.223 1.387-.078 1.9.435.721.72.721 1.884 0 2.604-.719.719-1.881.719-2.6 0-.539-.541-.674-1.337-.404-1.996L12.86 8.955v6.525c.176.086.342.203.488.348.713.721.713 1.883 0 2.6-.719.721-1.889.721-2.609 0-.719-.719-.719-1.879 0-2.598.182-.18.387-.316.605-.406V8.835c-.217-.091-.424-.222-.6-.401-.545-.545-.676-1.342-.396-2.009L7.636 3.7.45 10.881c-.6.605-.6 1.584 0 2.189l10.48 10.477c.604.604 1.582.604 2.186 0l10.43-10.43c.605-.603.605-1.582 0-2.187" />
+                d="M9.585 11.692h4.328s2.432.039 2.432-2.35V5.391S16.714 3 11.936 3C7.362 3 7.647 4.983 7.647 4.983l.006 2.055h4.363v.617H5.92s-2.927-.332-2.927 4.282 2.555 4.45 2.555 4.45h1.524v-2.141s-.083-2.554 2.513-2.554zm-.056-5.74a.784.784 0 1 1 0-1.57.784.784 0 1 1 0 1.57z" />
+              <path
+                d="M18.452 7.532h-1.524v2.141s.083 2.554-2.513 2.554h-4.328s-2.432-.04-2.432 2.35v3.951s-.369 2.391 4.409 2.391c4.573 0 4.288-1.983 4.288-1.983l-.006-2.054h-4.363v-.617h6.097s2.927.332 2.927-4.282-2.555-4.451-2.555-4.451zm-3.981 10.436a.784.784 0 1 1 0 1.57.784.784 0 1 1 0-1.57z" />
             </svg>
           </div>
-          <div class="tech-name">Git</div>
         </div>
+        <div class="tech-name">Python</div>
+      </div>
 
-        <div class="tech-item">
-          <div class="tech-icon" style="background: #181717; border-radius: 50%;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 98 96" width="60" height="60" fill="#ffffff"
-              aria-hidden="true">
+      <div class="tech-item size-lg" tabindex="0" aria-label="React">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#61DAFB" stroke-width="1" aria-hidden="true">
+              <ellipse cx="12" cy="12" rx="10" ry="4.2" />
+              <ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(60 12 12)" />
+              <ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(120 12 12)" />
+              <circle cx="12" cy="12" r="1.8" fill="#61DAFB" />
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">React</div>
+      </div>
+
+      <div class="tech-item size-lg" tabindex="0" aria-label="JavaScript">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#F7DF1E" aria-hidden="true">
+              <rect width="24" height="24" fill="#F7DF1E" rx="3" />
+              <text x="12" y="17" font-size="12" text-anchor="middle" fill="#000" font-weight="bold">JS</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">JavaScript</div>
+      </div>
+
+      <div class="tech-item size-lg" tabindex="0" aria-label="AI">
+        <div class="bubble-float">
+          <div class="tech-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="64" rx="8" fill="#FF9A00" />
+              <text x="50%" y="58%" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700"
+                font-size="28" fill="#fff">Ai</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">AI</div>
+      </div>
+
+      <div class="tech-item size-md" tabindex="0" aria-label="TypeScript">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#3178C6" aria-hidden="true">
+              <rect width="24" height="24" fill="#3178C6" rx="3" />
+              <text x="12" y="17" font-size="10" text-anchor="middle" fill="#fff" font-weight="bold">TS</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">TypeScript</div>
+      </div>
+
+      <div class="tech-item size-md" tabindex="0" aria-label="MongoDB">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#47A248" aria-hidden="true">
+              <path
+                d="M17.193 9.555c-1.264-5.58-4.252-7.414-4.573-8.115-.28-.394-.53-.954-.735-1.44-.036.495-.055.685-.523 1.184-.723.566-4.438 3.682-4.74 10.02-.282 5.912 4.27 9.435 4.888 9.884l.07.05A73.49 73.49 0 0111.91 24h.481c.114-1.032.284-2.056.51-3.07.417-.296.604-.463.85-.693a11.342 11.342 0 003.639-8.464c.01-.814-.103-1.662-.197-2.218zm-5.336 8.195s0-8.291.275-8.29c.213 0 .49 10.695.49 10.695-.381-.045-.765-1.76-.765-2.405z" />
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">MongoDB</div>
+      </div>
+
+      <div class="tech-item size-md" tabindex="0" aria-label="AWS">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#232F3E" aria-hidden="true">
+              <rect width="24" height="24" rx="12" fill="#232F3E" />
+              <text x="12" y="15" font-size="7.5" text-anchor="middle" fill="#FF9900" font-weight="700">AWS</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">AWS</div>
+      </div>
+
+      <div class="tech-item size-md" tabindex="0" aria-label="GitHub">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 98 96" fill="#181717" aria-hidden="true">
               <path d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69
            2.427.49 3.316-1.058 3.316-2.362 0-1.162-.043-4.244-.067-8.33-13.59
            2.957-16.457-6.56-16.457-6.56-2.207-5.61-5.387-7.104-5.387-7.104
@@ -434,104 +695,239 @@
            C97.708 22 75.869 0 48.854 0z" />
             </svg>
           </div>
-          <div class="tech-name">GitHub</div>
         </div>
-
-        <div class="tech-item">
-          <div class="tech-icon" style="background:#1E1E1E; border-radius:14px;">
-            <!-- VS Code official logo -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="60" height="60" aria-hidden="true">
-              <path fill="#0065A9" d="M0 93.6v68.8l56 28.8 36.8-36.8L56 128l36.8-26.4L0 93.6z" />
-              <path fill="#007ACC" d="M192 32l-56 20.8-99.2 75.2L56 128l-19.2 12 99.2 75.2L192 236l64-44V68L192 32z" />
-              <path fill="#1F9CF0" d="M248 68v120l-56 40V28l56 40z" />
-            </svg>
-          </div>
-          <div class="tech-name">VS Code</div>
-        </div>
-
-        <div class="tech-item">
-          <div class="tech-icon">
-            <svg viewBox="0 0 24 24" width="60" height="60" fill="#ffffff">
-              <path d="M12 3l10 18H2z" />
-            </svg>
-          </div>
-          <div class="tech-name">Vercel</div>
-        </div>
-
-        <div class="tech-item">
-          <div class="tech-icon" style="background:#000000; border-radius:14px;">
-            <!-- Official Unity mark -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="60" height="60" aria-hidden="true">
-              <path fill="#FFFFFF"
-                d="M64 8L98 28v36l-34 20-34-20V28L64 8zm0 10L42 30v28l22 13 22-13V30L64 18zm0 38l-12-7v-9l12-7 12 7v9l-12 7z" />
-            </svg>
-          </div>
-          <div class="tech-name">Unity</div>
-        </div>
-
-        <div class="tech-item">
-          <div class="tech-icon">
-            <svg viewBox="0 0 24 24" width="60" height="60" fill="#8A2BE2">
-              <path
-                d="M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-4l-2 3h-4l-2-3H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm0 2v8h4l2 3h4l2-3h4V8H4zm2 2h3v4H6v-4zm10 0h3v4h-3v-4z" />
-            </svg>
-          </div>
-          <div class="tech-name">AR / VR</div>
-        </div>
-
-        <div class="tech-item">
-          <div class="tech-icon" aria-hidden="true">
-            <!-- Illustrator-like Ai badge -->
-            <svg viewBox="0 0 64 64" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
-              <rect width="64" height="64" rx="8" fill="#FF9A00" />
-              <text x="50%" y="58%" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700"
-                font-size="28" fill="#fff">Ai</text>
-            </svg>
-          </div>
-          <div class="tech-name">AI</div>
-        </div>
+        <div class="tech-name">GitHub</div>
       </div>
-    </div>
 
-    <!-- Second Row (Reverse Direction) -->
-    <div class="slider-container">
-      <div class="slider-track-2" id="track2">
-        <div class="tech-item">
+      <div class="tech-item size-md" tabindex="0" aria-label="HTML5">
+        <div class="bubble-float">
           <div class="tech-icon">
-            <svg viewBox="0 0 24 24" width="60" height="60" fill="#FF6F00">
+            <svg viewBox="0 0 24 24" fill="#FF6F00" aria-hidden="true">
               <path
                 d="M1.5 0h21l-1.91 21.563L11.977 24l-8.565-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z" />
             </svg>
           </div>
-          <div class="tech-name">HTML5</div>
         </div>
+        <div class="tech-name">HTML5</div>
+      </div>
 
-        <div class="tech-item">
+      <div class="tech-item size-md" tabindex="0" aria-label="CSS3">
+        <div class="bubble-float">
           <div class="tech-icon" aria-hidden="true">
-            <!-- CSS3 shield -->
-            <svg viewBox="0 0 512 512" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
               <path fill="#1572B6" d="M71 460L30 0h452l-41 460L256 512" />
               <path fill="#33A9DC" d="M256 472l166-45 35-393H256" />
               <path fill="#fff" d="M163 163h186l-13 146-86 36-86-36-10-146z" />
             </svg>
           </div>
-          <div class="tech-name">CSS3</div>
         </div>
+        <div class="tech-name">CSS3</div>
+      </div>
 
-        <div class="tech-item">
+      <div class="tech-item size-md" tabindex="0" aria-label="MySQL">
+        <div class="bubble-float">
           <div class="tech-icon">
-            <svg viewBox="0 0 24 24" width="60" height="60" fill="#F7DF1E">
-              <rect width="24" height="24" fill="#F7DF1E" rx="3" />
-              <text x="12" y="17" font-size="12" text-anchor="middle" fill="#000" font-weight="bold">JS</text>
+            <svg viewBox="0 0 24 24" fill="#4479A1" aria-hidden="true">
+              <rect width="24" height="24" rx="12" fill="#4479A1" />
+              <text x="12" y="15" font-size="6.5" text-anchor="middle" fill="#fff" font-weight="700">SQL</text>
             </svg>
           </div>
-          <div class="tech-name">Javascript</div>
         </div>
+        <div class="tech-name">MySQL</div>
+      </div>
 
-        <div class="tech-item">
-          <div class="tech-icon" style="background:#283593; border-radius:14px;">
+      <div class="tech-item size-md" tabindex="0" aria-label="VS Code">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <!-- VS Code official logo -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" aria-hidden="true">
+              <path fill="#0065A9" d="M0 93.6v68.8l56 28.8 36.8-36.8L56 128l36.8-26.4L0 93.6z" />
+              <path fill="#007ACC" d="M192 32l-56 20.8-99.2 75.2L56 128l-19.2 12 99.2 75.2L192 236l64-44V68L192 32z" />
+              <path fill="#1F9CF0" d="M248 68v120l-56 40V28l56 40z" />
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">VS Code</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="Git">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#F05032" aria-hidden="true">
+              <path
+                d="M23.546 10.93L13.067.452c-.604-.603-1.582-.603-2.188 0L8.708 2.627l2.76 2.76c.645-.215 1.379-.07 1.889.441.516.515.658 1.258.438 1.9l2.658 2.66c.645-.223 1.387-.078 1.9.435.721.72.721 1.884 0 2.604-.719.719-1.881.719-2.6 0-.539-.541-.674-1.337-.404-1.996L12.86 8.955v6.525c.176.086.342.203.488.348.713.721.713 1.883 0 2.6-.719.721-1.889.721-2.609 0-.719-.719-.719-1.879 0-2.598.182-.18.387-.316.605-.406V8.835c-.217-.091-.424-.222-.6-.401-.545-.545-.676-1.342-.396-2.009L7.636 3.7.45 10.881c-.6.605-.6 1.584 0 2.189l10.48 10.477c.604.604 1.582.604 2.186 0l10.43-10.43c.605-.603.605-1.582 0-2.187" />
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">Git</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="Redux">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#764ABC" aria-hidden="true">
+              <rect width="24" height="24" rx="12" fill="#764ABC" />
+              <text x="12" y="15" font-size="7" text-anchor="middle" fill="#fff" font-weight="700">Rdx</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">Redux</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="GitLab">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#FC6D26" aria-hidden="true">
+              <rect width="24" height="24" rx="12" fill="#FC6D26" />
+              <text x="12" y="15" font-size="7.5" text-anchor="middle" fill="#fff" font-weight="700">GL</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">GitLab</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="Linux">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#000000" aria-hidden="true">
+              <rect width="24" height="24" rx="12" fill="#111" />
+              <text x="12" y="15" font-size="6.5" text-anchor="middle" fill="#FCC624" font-weight="700">Lnx</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">Linux</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="Cloudflare">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#F38020" aria-hidden="true">
+              <rect width="24" height="24" rx="12" fill="#F38020" />
+              <text x="12" y="15" font-size="6.5" text-anchor="middle" fill="#fff" font-weight="700">CF</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">Cloudflare</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="Vercel">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#ffffff" aria-hidden="true">
+              <rect width="24" height="24" rx="12" fill="#000000" />
+              <path d="M12 3l10 18H2z" />
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">Vercel</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="Netlify">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#00C7B7" aria-hidden="true">
+              <rect width="24" height="24" rx="12" fill="#00C7B7" />
+              <text x="12" y="15" font-size="6" text-anchor="middle" fill="#fff" font-weight="700">Nfy</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">Netlify</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="PyTorch">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#EE4C2C" aria-hidden="true">
+              <path
+                d="M12.005 0L4.952 7.05l2.005 2.005 5.053-5.053 5.053 5.053 2.005-2.005zm0 24l7.053-7.05-2.005-2.005-5.053 5.053-5.053-5.053-2.005 2.005zm-7.05-11.995L0 7.05l2.005-2.005 4.95 4.95v4.11l-2.005 2.005zm14.1 0l4.95 4.95-2.005 2.005-4.95-4.95v-4.11l2.005-2.005z" />
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">PyTorch</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="Unity">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <!-- Official Unity mark -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="#FFFFFF" aria-hidden="true">
+              <rect width="128" height="128" rx="64" fill="#000000" />
+              <path
+                d="M64 8L98 28v36l-34 20-34-20V28L64 8zm0 10L42 30v28l22 13 22-13V30L64 18zm0 38l-12-7v-9l12-7 12 7v9l-12 7z" />
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">Unity</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="Django">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#092E20" aria-hidden="true">
+              <rect width="24" height="24" rx="12" fill="#092E20" />
+              <text x="12" y="15" font-size="7.5" text-anchor="middle" fill="#fff" font-weight="700">Dj</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">Django</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="REST API">
+        <div class="bubble-float">
+          <div class="tech-icon" style="background:#1e1e1e; border-radius:50%;">
+            <!-- API icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="12" cy="32" r="5" fill="#4A90E2" />
+              <circle cx="52" cy="32" r="5" fill="#4A90E2" />
+              <circle cx="32" cy="12" r="5" fill="#4A90E2" />
+              <circle cx="32" cy="52" r="5" fill="#4A90E2" />
+              <path fill="none" stroke="#4A90E2" stroke-width="3" stroke-linecap="round"
+                d="M12 32L32 12L52 32L32 52Z" />
+              <text x="22" y="37" font-family="Arial, sans-serif" font-size="10" fill="#ffffff"
+                font-weight="700">API</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">REST API</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="Google Cloud">
+        <div class="bubble-float">
+          <div class="tech-icon" style="background:#0f0b10; border-radius:50%;">
+            <!-- Official Google "G" logo -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#EA4335"
+                d="M24 9.5c3.5 0 6.3 1.2 8.2 2.9l6.1-6.1C34.4 3.5 29.6 2 24 2 14.8 2 6.9 7.7 3.2 15.5l7.1 5.5C11.8 13.6 17.3 9.5 24 9.5z" />
+              <path fill="#34A853"
+                d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.8-2 5.1-4.3 6.7l6.6 5.1c3.9-3.6 6.4-8.9 6.4-16.3z" />
+              <path fill="#4A90E2"
+                d="M10.3 28.1a14.4 14.4 0 0 1-.7-4.6c0-1.6.3-3.1.7-4.6l-7.1-5.5C2.4 16.6 2 20.2 2 23.5s.4 6.9 1.2 10.1l7.1-5.5z" />
+              <path fill="#FBBC05"
+                d="M24 46c5.6 0 10.3-1.8 13.7-5l-6.6-5.1c-1.8 1.2-4 1.9-7.1 1.9-6.7 0-12.2-4.1-14.4-9.8l-7.1 5.5C6.9 40.3 14.8 46 24 46z" />
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">Google Cloud</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="C++">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" aria-hidden="true">
+              <rect width="128" height="128" rx="64" fill="#00599C" />
+              <text x="50%" y="60%" text-anchor="middle" fill="#FFFFFF" font-size="34" font-family="Arial, sans-serif"
+                font-weight="700">C++</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">C++</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="C">
+        <div class="bubble-float">
+          <div class="tech-icon" style="background:#283593; border-radius:50%;">
             <!-- C language logo -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="60" height="60" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" aria-hidden="true">
               <path fill="#00599C" d="M64 8L8 36v56l56 28 56-28V36L64 8z" />
               <path fill="#004482" d="M64 8v112l56-28V36L64 8z" />
               <path fill="#659AD2"
@@ -540,63 +936,46 @@
                 font-weight="700">C</text>
             </svg>
           </div>
-          <div class="tech-name">C</div>
         </div>
-
-        <div class="tech-item">
-          <div class="tech-icon">
-            <svg viewBox="0 0 24 24" width="60" height="60" fill="#4B8BBE">
-              <path
-                d="M9.585 11.692h4.328s2.432.039 2.432-2.35V5.391S16.714 3 11.936 3C7.362 3 7.647 4.983 7.647 4.983l.006 2.055h4.363v.617H5.92s-2.927-.332-2.927 4.282 2.555 4.45 2.555 4.45h1.524v-2.141s-.083-2.554 2.513-2.554zm-.056-5.74a.784.784 0 1 1 0-1.57.784.784 0 1 1 0 1.57z" />
-              <path
-                d="M18.452 7.532h-1.524v2.141s.083 2.554-2.513 2.554h-4.328s-2.432-.04-2.432 2.35v3.951s-.369 2.391 4.409 2.391c4.573 0 4.288-1.983 4.288-1.983l-.006-2.054h-4.363v-.617h6.097s2.927.332 2.927-4.282-2.555-4.451-2.555-4.451zm-3.981 10.436a.784.784 0 1 1 0 1.57.784.784 0 1 1 0-1.57z" />
-            </svg>
-          </div>
-          <div class="tech-name">Python</div>
-        </div>
-
-        <div class="tech-item">
-          <div class="tech-icon">
-            <svg viewBox="0 0 24 24" width="60" height="60" fill="#47A248">
-              <path
-                d="M17.193 9.555c-1.264-5.58-4.252-7.414-4.573-8.115-.28-.394-.53-.954-.735-1.44-.036.495-.055.685-.523 1.184-.723.566-4.438 3.682-4.74 10.02-.282 5.912 4.27 9.435 4.888 9.884l.07.05A73.49 73.49 0 0111.91 24h.481c.114-1.032.284-2.056.51-3.07.417-.296.604-.463.85-.693a11.342 11.342 0 003.639-8.464c.01-.814-.103-1.662-.197-2.218zm-5.336 8.195s0-8.291.275-8.29c.213 0 .49 10.695.49 10.695-.381-.045-.765-1.76-.765-2.405z" />
-            </svg>
-          </div>
-          <div class="tech-name">MongoDB</div>
-        </div>
-
-        <div class="tech-item">
-          <div class="tech-icon">
-            <svg viewBox="0 0 24 24" width="60" height="60" fill="#EE4C2C">
-              <path
-                d="M12.005 0L4.952 7.05l2.005 2.005 5.053-5.053 5.053 5.053 2.005-2.005zm0 24l7.053-7.05-2.005-2.005-5.053 5.053-5.053-5.053-2.005 2.005zm-7.05-11.995L0 7.05l2.005-2.005 4.95 4.95v4.11l-2.005 2.005zm14.1 0l4.95 4.95-2.005 2.005-4.95-4.95v-4.11l2.005-2.005z" />
-            </svg>
-          </div>
-          <div class="tech-name">PyTorch</div>
-        </div>
-
-        <div class="tech-item">
-          <div class="tech-icon">
-            <svg viewBox="0 0 24 24" width="60" height="60" fill="#150458">
-              <path
-                d="M16.922 11.76a.975.975 0 0 0-.974.974v.716h-2.033V7.618A5.618 5.618 0 0 0 8.297 2H1.945v20h6.352a5.618 5.618 0 0 0 5.618-5.618v-3.646h2.033v.715a.975.975 0 0 0 1.949 0v-.715h2.154a.975.975 0 0 0 0-1.949h-2.154v-.716a.975.975 0 0 0-.975-.974zm-8.625 7.292H3.894V3.949h4.403a3.668 3.668 0 0 1 3.669 3.669v7.764a3.668 3.668 0 0 1-3.669 3.67z" />
-            </svg>
-          </div>
-          <div class="tech-name">Pandas</div>
-        </div>
-
-        <div class="tech-item">
-          <div class="tech-icon" style="background:#C74634; border-radius:14px;">
-            <!-- Official Oracle Cloud mark -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60" aria-hidden="true">
-              <!-- White Oracle Cloud "ring" -->
-              <path fill="#FFFFFF"
-                d="M32 14c-9.94 0-18 5.37-18 12s8.06 12 18 12 18-5.37 18-12S41.94 14 32 14zm0 20c-7.73 0-14-3.59-14-8s6.27-8 14-8 14 3.59 14 8-6.27 8-14 8z" />
-            </svg>
-          </div>
-          <div class="tech-name">Oracle Cloud</div>
-        </div>
+        <div class="tech-name">C</div>
       </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="Azure Cloud">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#0078D4" aria-hidden="true">
+              <rect width="24" height="24" rx="12" fill="#0078D4" />
+              <text x="12" y="15" font-size="6.5" text-anchor="middle" fill="#fff" font-weight="700">Az</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">Azure Cloud</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="Oracle Cloud">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#F80000" aria-hidden="true">
+              <rect width="24" height="24" rx="12" fill="#F80000" />
+              <text x="12" y="15" font-size="6" text-anchor="middle" fill="#fff" font-weight="700">Orcl</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">Oracle Cloud</div>
+      </div>
+
+      <div class="tech-item size-sm" tabindex="0" aria-label="Pandas">
+        <div class="bubble-float">
+          <div class="tech-icon">
+            <svg viewBox="0 0 24 24" fill="#150458" aria-hidden="true">
+              <rect width="24" height="24" rx="12" fill="#150458" />
+              <text x="12" y="15" font-size="6.5" text-anchor="middle" fill="#fff" font-weight="700">Pd</text>
+            </svg>
+          </div>
+        </div>
+        <div class="tech-name">Pandas</div>
+      </div>
+
     </div>
   </section>
   <!-- skills section ends -->
@@ -671,6 +1050,19 @@
   <!-- work project section ends -->
 
   <!-- experience section starts -->
+  <style>
+    body:not(.dark-mode) .experience {
+      background: #F0EDE6 !important;
+    }
+
+    /* .certification has margin-top:5rem which exposed the page's white
+       background as a gap right after the experience section — close it
+       by extending the experience section's own color underneath instead
+       of altering the certification section's spacing. */
+    body:not(.dark-mode) .experience {
+      box-shadow: 0 5rem 0 0 #F0EDE6;
+    }
+  </style>
   <section class="experience" id="experience">
 
     <h1 class="heading">
@@ -788,6 +1180,63 @@
   <!-- github section end -->
 
   <!-- nice card Section start check properly  card -->
+  <style>
+    .socard-container {
+      align-items: stretch !important;
+    }
+
+
+    .left-section {
+      height: auto !important;
+    }
+
+    .github-card,
+    .social-carousel {
+      --card-w: 500px;
+      --card-h: 300px;
+      width: var(--card-w) !important;
+      max-width: var(--card-w) !important;
+      height: var(--card-h) !important;
+      border-radius: 20px !important;
+      padding: 20px !important;
+      margin: 0 !important;
+      box-sizing: border-box !important;
+    }
+
+    .right-section {
+      margin-top: 0 !important;
+      align-items: stretch !important;
+      height: 100% !important;
+    }
+
+    .youtube-card {
+      height: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    @media (max-width: 768px) {
+      .github-card,
+      .social-carousel {
+        width: 100% !important;
+        max-width: 420px !important;
+        margin: 0 auto !important;
+        box-sizing: border-box !important;
+      }
+
+      .carousel-container {
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      .oksocial-card {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+      }
+    }
+  </style>
   <section class="skills-section">
     <div class="socard-container">
 
@@ -943,9 +1392,11 @@
     <div class="gita-overlay"></div>
 
     <div class="gita-content">
-      <video class="gita-video" autoplay muted loop playsinline>
-        <source src="./assets/krishna-B3ChHryE.mp4" type="video/mp4">
-      </video>
+      <!-- preload="none" + no eager src: this file is ~1.8MB, one of the
+           heaviest assets on the page. It's now only fetched and played once
+           the section actually scrolls into view (see IntersectionObserver
+           script near the end of the page), instead of downloading on load. -->
+      <video class="gita-video" muted loop playsinline preload="none" data-src="./assets/krishna-B3ChHryE.mp4"></video>
 
       <div class="gita-text">
         <div class="sanskrit">
@@ -984,7 +1435,6 @@
       <div class="content">
         <div class="image-box">
           <!-- Include the Lottie library (only once per page) -->
-          <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 
           <!-- Two stacked Lottie animations -->
           <div class="lottie-wrapper">
@@ -997,6 +1447,8 @@
             </lottie-player>
           </div>
         </div>
+        <!-- lottie-player library is already loaded once (deferred) in <head>; a
+             second copy was being downloaded here, doubling that request. -->
 
         <form id="contact-form">
 
@@ -1115,16 +1567,29 @@
   <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
 
   <!-- Tawk.to Live Chat Script -->
+  <!-- Loaded on first scroll instead of immediately on page load, since the
+       widget isn't needed until the visitor actually starts browsing. -->
   <script type="text/javascript">
     var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-    (function () {
+
+    function loadTawkTo() {
+      if (window.__tawkToLoaded) return;
+      window.__tawkToLoaded = true;
+
+      Tawk_LoadStart = new Date();
       var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
       s1.async = true;
       s1.src = 'https://embed.tawk.to/685bce4bee661a190cce8ac5/1iuj9rmab';
       s1.charset = 'UTF-8';
       s1.setAttribute('crossorigin', '*');
       s0.parentNode.insertBefore(s1, s0);
-    })();
+
+      window.removeEventListener('scroll', loadTawkTo);
+      window.removeEventListener('touchstart', loadTawkTo);
+    }
+
+    window.addEventListener('scroll', loadTawkTo, { passive: true, once: true });
+    window.addEventListener('touchstart', loadTawkTo, { passive: true, once: true });
   </script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -1162,6 +1627,32 @@
     });
   </script>
   <script>
+    // Simple localStorage cache (10 min TTL) so the GitHub/dev.to API calls
+    // below aren't re-fetched on every page visit/reload within that window.
+    function cachedFetch(url, { ttlMs = 10 * 60 * 1000, type = "json" } = {}) {
+      const cacheKey = "cache:" + url;
+      try {
+        const cached = JSON.parse(localStorage.getItem(cacheKey));
+        if (cached && Date.now() - cached.timestamp < ttlMs) {
+          return Promise.resolve(cached.data);
+        }
+      } catch (e) {
+        // ignore corrupt cache entries
+      }
+
+      return fetch(url)
+        .then((res) => (type === "text" ? res.text() : res.json()))
+        .then((data) => {
+          try {
+            localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data }));
+          } catch (e) {
+            // storage full/unavailable - fetched data is still returned below
+          }
+          return data;
+        });
+    }
+  </script>
+  <script>
     document.addEventListener("DOMContentLoaded", async () => {
       const username = "abinasharma001";
 
@@ -1171,8 +1662,7 @@
       const readmeContainer = document.querySelector("#readme");
 
       // Fetch GitHub Profile
-      const profileRes = await fetch(`https://api.github.com/users/${username}`);
-      const profile = await profileRes.json();
+      const profile = await cachedFetch(`https://api.github.com/users/${username}`);
 
       profileContainer.innerHTML = `
   <div class="fade-in">
@@ -1186,8 +1676,7 @@
 `;
 
       // Fetch Repositories
-      const reposRes = await fetch(`https://api.github.com/users/${username}/repos?sort=updated`);
-      const repos = await reposRes.json();
+      const repos = await cachedFetch(`https://api.github.com/users/${username}/repos?sort=updated`);
 
       reposContainer.innerHTML = repos
         .slice(0, 700) // Show 700 repos
@@ -1203,8 +1692,10 @@
         .join("");
 
       // Fetch README
-      const readmeRes = await fetch(`https://raw.githubusercontent.com/${username}/${username}/main/README.md`);
-      const readmeText = await readmeRes.text();
+      const readmeText = await cachedFetch(
+        `https://raw.githubusercontent.com/${username}/${username}/main/README.md`,
+        { type: "text" }
+      );
 
       const converter = new showdown.Converter();
       const readmeHTML = converter.makeHtml(readmeText);
@@ -1247,10 +1738,9 @@
   // Fetch blogs from Dev.to
   async function fetchBlogs() {
     try {
-      const res = await fetch(
+      allBlogs = await cachedFetch(
         `https://dev.to/api/articles?username=${username}&per_page=100`
       );
-      allBlogs = await res.json();
       renderTags();
       renderBlogs();
     } catch (err) {
@@ -1347,6 +1837,28 @@
   // Init
   fetchBlogs();
 </script>
+  <script>
+    // Lazy-load the heavy Gita background video: only assign its src and
+    // start playback once it's about to enter the viewport, and pause/free
+    // it again once scrolled away, instead of downloading ~1.8MB on load.
+    document.addEventListener("DOMContentLoaded", () => {
+      const gitaVideo = document.querySelector(".gita-video");
+      if (!gitaVideo || !gitaVideo.dataset.src) return;
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (!gitaVideo.src) gitaVideo.src = gitaVideo.dataset.src;
+            gitaVideo.play().catch(() => {});
+          } else {
+            gitaVideo.pause();
+          }
+        });
+      }, { rootMargin: "300px 0px" });
+
+      io.observe(gitaVideo);
+    });
+  </script>
   <!-- === Custom Cursor === -->
   <div class="cursor">
     <div class="cursor__ball cursor__ball--big">
@@ -1369,14 +1881,15 @@ Modernized and made adaptive by Abinash (2025)
 Original CodePen: https://codepen.io/clementGir/pen/RQqvQx
 Licensed under the MIT License
 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <!-- GSAP is already loaded above (GSAP + ScrollTrigger block); loading it a
+       second time here just wasted a duplicate network request/parse. -->
   <script>
     const bigBall = document.querySelector('.cursor__ball--big');
     const smallBall = document.querySelector('.cursor__ball--small');
     const hoverables = document.querySelectorAll('.hoverable');
 
     document.body.addEventListener('mousemove', (e) => {
-      gsap.to(bigBall, { x: e.clientX + window.scrollX, y: e.clientY + window.scrollY, duration: 0.22, ease: "power2.out" });
+      gsap.to(bigBall, { x: e.clientX + window.scrollX, y: e.clientY + window.scrollY, duration: 0.30, ease: "power2.out" });
       gsap.to(smallBall, { x: e.clientX + window.scrollX, y: e.clientY + window.scrollY, duration: 0.08 });
     });
 
@@ -1398,7 +1911,7 @@ Licensed under the MIT License
   </script>
   <script>
     // Ensure music stays paused on page load
-    let autoScrollTimer = null;
+    let autoScrollFrame = null;
 
     function updateMusicButtonState(btn, isPlaying) {
       if (!btn) return;
@@ -1413,10 +1926,13 @@ Licensed under the MIT License
     }
 
     function stopAutoScroll() {
-      if (autoScrollTimer) {
-        clearInterval(autoScrollTimer);
-        autoScrollTimer = null;
+      if (autoScrollFrame) {
+        cancelAnimationFrame(autoScrollFrame);
+        autoScrollFrame = null;
       }
+      // Restore whatever smooth-scroll behavior/library was active before autoscroll
+      document.documentElement.style.scrollBehavior = '';
+      if (window.lenisInstance) window.lenisInstance.start();
     }
 
     function stopMusicAndAutoScroll() {
@@ -1433,12 +1949,31 @@ Licensed under the MIT License
       updateMusicButtonState(btn, false);
     }
 
+    // Pixels per second — using a time-based (requestAnimationFrame) loop
+    // instead of a fixed setInterval keeps the speed identical in every
+    // section regardless of frame-rate dips (e.g. while the Projects/GitHub
+    // sections are still rendering their dynamic content).
+    const AUTO_SCROLL_SPEED = 90;
+
     function startAutoScroll() {
       if (!document.getElementById("home")) return;
 
       stopAutoScroll();
 
-      autoScrollTimer = setInterval(() => {
+      // The CSS "scroll-behavior: smooth" rule and Lenis's own smooth-scroll
+      // engine were both fighting our manual scrollBy() calls, which is why
+      // the speed felt inconsistent between sections. Disable both while
+      // autoscroll drives the page, then restore them in stopAutoScroll().
+      document.documentElement.style.scrollBehavior = 'auto';
+      if (window.lenisInstance) window.lenisInstance.stop();
+
+      let lastTime = null;
+
+      function step(timestamp) {
+        if (lastTime === null) lastTime = timestamp;
+        const deltaSeconds = (timestamp - lastTime) / 1000;
+        lastTime = timestamp;
+
         const maxScrollY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight - 1);
 
         if (window.scrollY >= maxScrollY) {
@@ -1446,9 +1981,42 @@ Licensed under the MIT License
           return;
         }
 
-        window.scrollBy(0, 1);
-      }, 18);
+        window.scrollBy(0, AUTO_SCROLL_SPEED * deltaSeconds);
+        autoScrollFrame = requestAnimationFrame(step);
+      }
+
+      autoScrollFrame = requestAnimationFrame(step);
     }
+
+    // While music/autoscroll is running, pausing for a moment when the user
+    // scrolls back up to the very top gives them a chance to look around
+    // before it continues. This should only fire when scrolling UP to the
+    // top, not when scrolling down.
+    let lastScrollY = window.scrollY;
+    let topPauseTriggered = false;
+    let topPauseTimeout = null;
+
+    window.addEventListener('scroll', () => {
+      const currentY = window.scrollY;
+      const scrolledUp = currentY < lastScrollY;
+      lastScrollY = currentY;
+
+      if (currentY > 4) {
+        // Left the top area — allow the pause to trigger again next time.
+        topPauseTriggered = false;
+        return;
+      }
+
+      const music = document.getElementById("bgMusic");
+      if (music && !music.paused && scrolledUp && !topPauseTriggered) {
+        topPauseTriggered = true;
+        stopAutoScroll();
+        clearTimeout(topPauseTimeout);
+        topPauseTimeout = setTimeout(() => {
+          if (music && !music.paused) startAutoScroll();
+        }, 3000);
+      }
+    }, { passive: true });
 
     window.addEventListener('DOMContentLoaded', () => {
       const music = document.getElementById("bgMusic");
@@ -1567,55 +2135,148 @@ Licensed under the MIT License
     setInterval(nextSlide, 5000);
   </script>
   <script>
-    function duplicateTrack(trackId) {
-      const track = document.getElementById(trackId);
-      if (!track || track.dataset.duplicated === 'true') return;
-
-      const items = Array.from(track.children);
-      track.dataset.originalCount = items.length;
-      items.forEach((item) => {
-        const clone = item.cloneNode(true);
-        clone.setAttribute('aria-hidden', 'true');
-        track.appendChild(clone);
-      });
-      track.dataset.duplicated = 'true';
-    }
-
-    duplicateTrack('track1');
-    duplicateTrack('track2');
-
-    function setupTechStackMarquee(trackId, speed) {
-      const track = document.getElementById(trackId);
-      if (!track) return;
+    /* =====================================================================
+       Tech Stack Bubble Cloud — magnetic cluster interaction
+       (no scale/zoom/glow-enlargement — bubbles keep their fixed size;
+       only `transform` (translate3d) and class-driven z-index/opacity move)
+       ===================================================================== */
+    (function initTechCloud() {
+      const cloud = document.getElementById('techCloud');
+      if (!cloud) return;
 
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (prefersReducedMotion) {
-        track.style.animation = 'none';
-        track.style.transform = 'translate3d(0, 0, 0)';
-        return;
+      const items = Array.from(cloud.querySelectorAll('.tech-item'));
+      if (prefersReducedMotion || !items.length) return;
+
+      // Per-bubble animation state: current/target are px offsets from each
+      // bubble's natural (stored) layout position.
+      const state = items.map((el) => ({
+        el,
+        current: { x: 0, y: 0 },
+        clusterTarget: { x: 0, y: 0 },
+        ambientTarget: { x: 0, y: 0 },
+      }));
+
+      // ----- Store each bubble's original x/y (its resting center) -----
+      let baseCenters = [];
+      function measureBaseCenters() {
+        // measure with zero offset so we capture the true resting position
+        state.forEach((s) => { s.el.style.transform = 'translate3d(0px,0px,0)'; });
+        baseCenters = state.map((s) => {
+          const r = s.el.getBoundingClientRect();
+          return { cx: r.left + r.width / 2, cy: r.top + r.height / 2, w: r.width, h: r.height };
+        });
+      }
+      measureBaseCenters();
+      window.addEventListener('resize', measureBaseCenters, { passive: true });
+
+      const CLUSTER_RADIUS = 240;   // neighbors within this range of the anchor get pulled in
+      const CLUSTER_PULL = 0.55;    // how far neighbors move toward the anchor (0 = stay, 1 = touch)
+      const OVERLAP_ALLOW = 0.55;   // fraction of combined radius allowed as slight overlap
+      const EASE = 0.12;            // lerp factor per frame ≈ 450-500ms settle (spring-like, no snapping)
+      const CURSOR_RADIUS = 150;    // ambient cursor influence range
+      const CURSOR_MAX = 8;         // px — subtle nudge only
+
+      let anchorEl = null;
+      let rafId = null;
+
+      // ----- Cluster: arrange neighbors around/behind the hovered bubble -----
+      function setCluster(anchorIdx) {
+        const anchor = baseCenters[anchorIdx];
+        state.forEach((s, i) => {
+          if (i === anchorIdx) { s.clusterTarget.x = 0; s.clusterTarget.y = 0; return; }
+          const c = baseCenters[i];
+          const dx = c.cx - anchor.cx;
+          const dy = c.cy - anchor.cy;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+
+          if (dist < CLUSTER_RADIUS) {
+            const minDist = (anchor.w / 2 + c.w / 2) * OVERLAP_ALLOW; // avoids harsh icon collision
+            let newDist = dist - (dist - minDist) * CLUSTER_PULL;
+            if (newDist < minDist) newDist = minDist;
+            const ux = dx / dist, uy = dy / dist;
+            s.clusterTarget.x = (anchor.cx + ux * newDist) - c.cx;
+            s.clusterTarget.y = (anchor.cy + uy * newDist) - c.cy;
+          } else {
+            s.clusterTarget.x = 0;
+            s.clusterTarget.y = 0;
+          }
+        });
       }
 
-      const originalCount = Number(track.dataset.originalCount || 0);
-      const firstDuplicate = track.children[originalCount];
-      const loopWidth = firstDuplicate ? firstDuplicate.offsetLeft : track.scrollWidth / 2;
-      if (!loopWidth) return;
+      function clearCluster() {
+        state.forEach((s) => { s.clusterTarget.x = 0; s.clusterTarget.y = 0; });
+      }
 
-      track.style.animation = 'none';
-      track.style.setProperty('--tech-distance', `${loopWidth}px`);
-      track.style.setProperty('--tech-duration', `${Math.max(10, loopWidth / speed)}s`);
-      track.offsetHeight;
-      track.style.animation = '';
-    }
+      function activateAnchor(item, idx) {
+        anchorEl = item;
+        items.forEach((el) => el.classList.remove('is-anchor', 'is-clustered'));
+        item.classList.add('is-anchor');
+        items.forEach((el) => { if (el !== item) el.classList.add('is-clustered'); });
+        setCluster(idx);
+        ensureLoop();
+      }
 
-    function refreshTechStackMarquees() {
-      const speed = window.innerWidth <= 768 ? 110 : 170;
-      setupTechStackMarquee('track1', speed);
-      setupTechStackMarquee('track2', speed);
-    }
+      function deactivateAnchor(item) {
+        if (anchorEl !== item) return;
+        anchorEl = null;
+        items.forEach((el) => el.classList.remove('is-anchor', 'is-clustered'));
+        clearCluster();
+        ensureLoop();
+      }
 
-    window.addEventListener('load', refreshTechStackMarquees);
-    window.addEventListener('resize', refreshTechStackMarquees);
-    refreshTechStackMarquees();
+      items.forEach((item, idx) => {
+        item.addEventListener('mouseenter', () => activateAnchor(item, idx));
+        item.addEventListener('mouseleave', () => deactivateAnchor(item));
+        item.addEventListener('focus', () => activateAnchor(item, idx));
+        item.addEventListener('blur', () => deactivateAnchor(item));
+      });
+
+      // ----- Extra polish: subtle ambient cursor influence when idle -----
+      cloud.addEventListener('mousemove', (e) => {
+        if (anchorEl) return; // cluster interaction takes priority
+        state.forEach((s, i) => {
+          const c = baseCenters[i];
+          const dx = e.clientX - c.cx;
+          const dy = e.clientY - c.cy;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          if (dist < CURSOR_RADIUS) {
+            const strength = (1 - dist / CURSOR_RADIUS) * CURSOR_MAX;
+            s.ambientTarget.x = (dx / dist) * strength;
+            s.ambientTarget.y = (dy / dist) * strength;
+          } else {
+            s.ambientTarget.x = 0;
+            s.ambientTarget.y = 0;
+          }
+        });
+        ensureLoop();
+      }, { passive: true });
+
+      cloud.addEventListener('mouseleave', () => {
+        state.forEach((s) => { s.ambientTarget.x = 0; s.ambientTarget.y = 0; });
+        ensureLoop();
+      });
+
+      // ----- rAF loop: lerp current -> (clusterTarget + ambientTarget) -----
+      function animate() {
+        let moving = false;
+        state.forEach((s) => {
+          const tx = s.clusterTarget.x + s.ambientTarget.x;
+          const ty = s.clusterTarget.y + s.ambientTarget.y;
+          const dx = tx - s.current.x;
+          const dy = ty - s.current.y;
+          if (Math.abs(dx) > 0.05 || Math.abs(dy) > 0.05) moving = true;
+          s.current.x += dx * EASE;
+          s.current.y += dy * EASE;
+          s.el.style.transform = `translate3d(${s.current.x.toFixed(2)}px, ${s.current.y.toFixed(2)}px, 0)`;
+        });
+        rafId = moving ? requestAnimationFrame(animate) : null;
+      }
+
+      function ensureLoop() {
+        if (!rafId) rafId = requestAnimationFrame(animate);
+      }
+    })();
   </script>
   <!-- Scroll Progress Bar Script -->
   <script>
@@ -1641,6 +2302,11 @@ Licensed under the MIT License
         infinite: false,
       });
 
+      // Expose globally so the auto-scroll logic can pause/resume Lenis
+      // instead of fighting it (this was the source of the inconsistent
+      // auto-scroll speed between sections).
+      window.lenisInstance = lenis;
+
       // Animation loop
       function raf(time) {
         lenis.raf(time);
@@ -1651,84 +2317,6 @@ Licensed under the MIT License
     } else {
       console.warn('Lenis library not loaded');
     }
-  </script>
-
-  <script>
-    /* Robust Lottie height sync — mobile-friendly */
-    (function robustSyncLottie() {
-      const about = document.querySelector('#about') || document.querySelector('.about');
-      if (!about) { console.warn('No #about found'); return; }
-      const lottie = about.querySelector('lottie-player.bg-lottie') || about.querySelector('lottie-player');
-
-      if (!lottie) { console.warn('No lottie-player found inside #about'); return; }
-
-      function measureHeight() {
-        // multiple measures — take the maximum to avoid undersizing on mobile
-        const rect = about.getBoundingClientRect();
-        const hCandidates = [
-          about.scrollHeight || 0,
-          about.offsetHeight || 0,
-          rect.height || 0,
-          window.innerHeight || 0,
-          document.documentElement.clientHeight || 0
-        ];
-        const h = Math.max(...hCandidates, 300); // safeguard min height
-        return Math.ceil(h);
-      }
-
-      function applyHeight() {
-        const h = measureHeight();
-        // set pixel heights explicitly so mobile browsers honour the size
-        try {
-          lottie.style.position = 'absolute';
-          lottie.style.top = '0';
-          lottie.style.left = '0';
-          lottie.style.width = '100%';
-          lottie.style.height = h + 'px';
-          lottie.style.minHeight = h + 'px';
-          lottie.style.maxHeight = h + 'px';
-          // inner nodes
-          Array.from(lottie.children || []).forEach(c => {
-            try {
-              c.style.width = '100%';
-              c.style.height = h + 'px';
-              c.style.minHeight = h + 'px';
-              c.style.maxHeight = h + 'px';
-            } catch (e) { }
-          });
-        } catch (e) {
-          console.warn('Failed applyHeight', e);
-        }
-      }
-
-      // initial
-      applyHeight();
-
-      // reapply on common events
-      const reapply = () => { applyHeight(); };
-      window.addEventListener('resize', reapply, { passive: true });
-      window.addEventListener('orientationchange', reapply);
-      window.addEventListener('pageshow', reapply);
-      window.addEventListener('load', reapply);
-      window.addEventListener('touchend', reapply, { passive: true }); // catches address-bar hide/show
-
-      // observe DOM changes inside about (images/quotes loading)
-      const mo = new MutationObserver(() => applyHeight());
-      mo.observe(about, { childList: true, subtree: true, attributes: true, characterData: true });
-
-      // retry mechanism: reapply a few times after load (handles late layout shifts)
-      [200, 800, 1600, 3000].forEach(delay => setTimeout(applyHeight, delay));
-
-      // optional safety loop for first 6s (stops itself)
-      let tries = 0;
-      const inten = setInterval(() => {
-        applyHeight();
-        tries++;
-        if (tries > 12) clearInterval(inten);
-      }, 500);
-
-      console.log('robust Lottie height sync enabled');
-    })();
   </script>
 </body>
 
