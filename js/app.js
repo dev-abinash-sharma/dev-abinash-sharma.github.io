@@ -17,7 +17,7 @@ particlesJS.load('particles-js', 'particles.json', function() {
 particlesJS('particles-js', {
   "particles": {
     "number": {
-      "value": 80,
+      "value": window.innerWidth <= 768 ? 40 : 80,
       "density": {
         "enable": true,
         "value_area": 800

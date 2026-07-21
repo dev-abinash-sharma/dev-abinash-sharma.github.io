@@ -251,10 +251,12 @@
 
 .globe-card {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 4px;
   border-radius: 30px;
+  height: 460px;      /* match left/right card height */
+  overflow: hidden;   /* clip instead of letting the widget's own fixed-height content push the card taller */
 }
 
 .globe-card #react-globe-root {
@@ -263,6 +265,10 @@
   aspect-ratio: 1 / 1;   /* keeps it perfectly square */
   height: auto;          /* remove fixed height */
   border-radius: 26px;
+  transform: scale(0.74);       /* the widget's real content is a fixed ~600px tall card;
+                                   scale it down uniformly so it fits the 460px slot without
+                                   cropping any of its content */
+  transform-origin: top center;
 }
 /* ===== ALIGN ALL THREE CARDS ===== */
 
@@ -286,28 +292,15 @@
 }
 
 .thisisme-card,
-.social-card,
-.modern-globe-card {
+.social-card {
   height: 460px;       /* Equal height for all 3 */
 }
-.modern-globe-card {
-  width: 420px;
-  height: 460px;
-  padding: 4px;
-  border-radius: 30px;
-  background: linear-gradient(135deg, #7b2ff7, #00e5ff);
-  box-shadow:
-    0 0 25px rgba(0, 200, 255, 0.4),
-    0 0 50px rgba(123, 47, 247, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.modern-globe-card #react-globe-root {
-  width: 460px;
-  height: 500px;
-  border-radius: 25px;
+/* Center column matches the same 460px row height, but the neon-bordered
+   .globe-card itself stays content-sized (like on mobile) and is simply
+   centered inside — keeps the border tight instead of stretching it. */
+.center-card {
+  height: 460px;
 }
 @media (max-width: 992px) {
 
@@ -318,17 +311,25 @@
 
   .thisisme-card,
   .social-card,
-  .modern-globe-card {
+  .globe-card,
+  .center-card {
     width: 100%;
     height: auto;
   }
 
-  .modern-globe-card #react-globe-root {
-    width: 0%;
+  .globe-card #react-globe-root {
+    width: 100%;
     max-width: 320px;
     height: 320px;
+    transform: none;   /* the mobile layout already fits without scaling */
   }
 
+}
+/* ===== HIDE SPLINE 3D SCENE ON MOBILE (perf + cleaner layout) ===== */
+@media (max-width: 768px) {
+  .spline-container {
+    display: none;
+  }
 }
 /* ================= PERFECTLY ALIGNED NEON GLOBE ================= */
 
